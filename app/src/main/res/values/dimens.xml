@@ -3,5 +3,6 @@
 
     <dimen name="margin_standard">16dp</dimen>
     <dimen name="margin_standard_half">8dp</dimen>
+    <dimen name="spacing_nav_buttons">4dp</dimen>
 
 </resources>

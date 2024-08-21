@@ -18,31 +18,22 @@
         android:orientation="horizontal">
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/StyleNavButton"
             android:layout_weight="1"
             android:layout_marginStart="@dimen/margin_standard"
-            android:layout_marginBottom="55dp"
-            android:layout_marginTop="@dimen/margin_standard_half"
-            style="@style/StyleNavButton"
+            android:layout_marginVertical="@dimen/margin_standard_half"
             android:backgroundTint="@color/categoryButtonColor"
             android:text="@string/button_category"/>
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/StyleNavButton"
             android:layout_weight="1"
             android:layout_marginEnd="@dimen/margin_standard"
-            android:layout_marginStart="4dp"
-            android:layout_marginBottom="55dp"
-            android:layout_marginTop="8dp"
-            android:paddingStart="18dp"
-            android:paddingEnd="14dp"
-            style="@style/StyleNavButton"
+            android:layout_marginStart="@dimen/spacing_nav_buttons"
+            android:layout_marginVertical="@dimen/margin_standard_half"
             app:icon="@drawable/ic_heart"
             app:iconGravity="textEnd"
             app:iconSize="24dp"
-            app:iconPadding="10dp"
             android:backgroundTint="@color/favoriteButtonColor"
             android:text="@string/button_favorite"/>
 
