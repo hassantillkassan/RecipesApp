@@ -18,6 +18,8 @@
         android:orientation="horizontal">
 
         <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             style="@style/StyleNavButton"
             android:layout_weight="1"
             android:layout_marginStart="@dimen/margin_standard"
@@ -26,14 +28,17 @@
             android:text="@string/button_category"/>
 
         <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             style="@style/StyleNavButton"
             android:layout_weight="1"
             android:layout_marginEnd="@dimen/margin_standard"
             android:layout_marginStart="@dimen/spacing_nav_buttons"
             android:layout_marginVertical="@dimen/margin_standard_half"
+            android:maxLines="1"
             app:icon="@drawable/ic_heart"
             app:iconGravity="textEnd"
-            app:iconSize="24dp"
+            app:iconSize="@dimen/icon_size_heart_favorite_button"
             android:backgroundTint="@color/favoriteButtonColor"
             android:text="@string/button_favorite"/>
 
