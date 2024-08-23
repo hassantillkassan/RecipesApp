@@ -5,15 +5,43 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:background="@color/backgroundColor">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/StyleNavButton"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/margin_standard"
+            android:layout_marginVertical="@dimen/margin_standard_half"
+            android:backgroundTint="@color/categoryButtonColor"
+            android:text="@string/button_category"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/StyleNavButton"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/margin_standard"
+            android:layout_marginStart="@dimen/spacing_nav_buttons"
+            android:layout_marginVertical="@dimen/margin_standard_half"
+            android:maxLines="1"
+            app:icon="@drawable/ic_heart"
+            app:iconGravity="textEnd"
+            app:iconSize="@dimen/icon_size_heart_favorite_button"
+            android:backgroundTint="@color/favoriteButtonColor"
+            android:text="@string/button_favorite"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

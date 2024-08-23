@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="margin_standard">16dp</dimen>
+    <dimen name="margin_standard_half">8dp</dimen>
+    <dimen name="spacing_nav_buttons">4dp</dimen>
+    <dimen name="icon_size_heart_favorite_button">24dp</dimen>
+    <dimen name="text_size_primary">14sp</dimen>
+
+</resources>
