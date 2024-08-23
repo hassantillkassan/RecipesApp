@@ -10,7 +10,7 @@
 
     <style name="StyleNavButton" parent="Widget.Material3.Button">
         <item name="android:textAppearance">@style/StyleTitle14</item>
-        <item name="cornerRadius">@dimen/corner_radius_button</item>
+        <item name="cornerRadius">@dimen/margin_standard_half</item>
     </style>
 
 </resources>
