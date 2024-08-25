@@ -23,5 +23,17 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        if (savedInstanceState == null) {
+            val fragment = CategoriesListFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.mainContainer, fragment)
+                .commit()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }
