@@ -4,8 +4,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import com.example.recipesapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -32,10 +34,26 @@ class MainActivity : AppCompatActivity() {
                 add<CategoriesListFragment>(R.id.mainContainer)
             }
         }
+
+        binding.buttonCategory.setOnClickListener{
+            navigateToFragment(CategoriesListFragment())
+        }
+
+        binding.buttonFavorites.setOnClickListener {
+            navigateToFragment(FavoritesFragment())
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun navigateToFragment(fragment: Fragment) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.mainContainer, fragment)
+            addToBackStack(null)
+        }
     }
 }
