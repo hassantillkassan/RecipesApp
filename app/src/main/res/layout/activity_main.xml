@@ -5,13 +5,13 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    android:background="@color/backgroundColor"
     android:orientation="vertical"
-    android:background="@color/backgroundColor">
+    tools:context=".MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:name="com.example.recipesapp.CategoriesListFragment"
         android:id="@+id/mainContainer"
+        android:name="com.example.recipesapp.CategoriesListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"

@@ -2,5 +2,4 @@
     <string name="app_name">RecipesApp</string>
     <string name="button_category">Categories</string>
     <string name="button_favorite">Favorites</string>
-    <string name="categories_fragment_title" translatable="false">CategoriesListFragment</string>
 </resources>
