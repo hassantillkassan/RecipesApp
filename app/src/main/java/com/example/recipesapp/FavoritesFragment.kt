@@ -17,7 +17,7 @@ class FavoritesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _favoritesBinding = FragmentFavoritesBinding.inflate(inflater, container, false)
         val view = favoritesBinding.root
         return view
