@@ -32,8 +32,8 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            style="@style/StyleNavButton"
             android:id="@+id/buttonCategory"
+            style="@style/StyleNavButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/margin_standard_half"
@@ -43,8 +43,8 @@
             android:text="@string/button_category" />
 
         <Button
-            style="@style/StyleNavButton"
             android:id="@+id/buttonFavorites"
+            style="@style/StyleNavButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/margin_standard_half"
