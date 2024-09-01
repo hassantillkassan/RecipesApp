@@ -7,7 +7,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import com.example.recipesapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -35,12 +34,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.buttonCategory.setOnClickListener{
-            navigateToFragment(CategoriesListFragment())
+        binding.buttonCategory.setOnClickListener {
+            navigateToFragment { CategoriesListFragment() }
         }
 
         binding.buttonFavorites.setOnClickListener {
-            navigateToFragment(FavoritesFragment())
+            navigateToFragment { FavoritesFragment() }
         }
     }
 
@@ -49,10 +48,10 @@ class MainActivity : AppCompatActivity() {
         _binding = null
     }
 
-    private fun navigateToFragment(fragment: Fragment) {
+    private inline fun navigateToFragment(fragmentProvider: () -> Fragment) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            replace(R.id.mainContainer, fragment)
+            replace(binding.mainContainer.id, fragmentProvider())
             addToBackStack(null)
         }
     }
