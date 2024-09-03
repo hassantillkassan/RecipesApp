@@ -11,6 +11,7 @@
     <style name="StyleNavButton" parent="Widget.Material3.Button">
         <item name="android:textAppearance">@style/StyleTitle14</item>
         <item name="cornerRadius">@dimen/margin_standard_half</item>
+        <item name="android:padding">0dp</item>
     </style>
 
 </resources>
