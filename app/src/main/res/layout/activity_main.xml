@@ -40,7 +40,7 @@
             android:layout_marginStart="@dimen/margin_standard"
             android:layout_weight="1"
             android:backgroundTint="@color/categoryButtonColor"
-            android:text="@string/button_category" />
+            android:text="@string/text_category" />
 
         <Button
             android:id="@+id/buttonFavorites"

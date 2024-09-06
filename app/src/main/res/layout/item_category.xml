@@ -1,17 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="@dimen/corner_radius"
+    android:layout_marginHorizontal="@dimen/margin_standard_half"
+    android:background="@drawable/ripple_background"
     android:clickable="true"
     android:focusable="true"
-    android:background="@drawable/ripple_background"
-    android:layout_marginHorizontal="@dimen/margin_standard_half">
+    app:cardCornerRadius="@dimen/corner_radius">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Элемент карточки"/>
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            tools:scaleType="centerCrop"
+            tools:src="@drawable/burger" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:fontFamily="@font/montserrat_alternates_semi_bold"
+            tools:layout_marginStart="@dimen/margin_standard_half"
+            tools:layout_marginTop="@dimen/margin_standard_half"
+            tools:text="Бургеры"
+            tools:textColor="@color/titleTextColor"
+            tools:textSize="@dimen/text_size_primary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:fontFamily="@font/montserrat_medium"
+            tools:layout_marginHorizontal="@dimen/margin_standard_half"
+            tools:layout_marginVertical="@dimen/margin_standard_half"
+            tools:text="Рецепты всех\nпопулярных видов\nбургеров"
+            tools:textColor="@color/descriptionTextColor"
+            tools:textSize="@dimen/text_size_description" />
+
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>
