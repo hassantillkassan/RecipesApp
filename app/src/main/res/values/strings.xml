@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">RecipesApp</string>
-    <string name="button_category">Categories</string>
     <string name="button_favorite">Favorites</string>
+    <string name="content_description_recipe_categories">Recipe categories cover image</string>
+    <string name="text_category">Categories</string>
 </resources>

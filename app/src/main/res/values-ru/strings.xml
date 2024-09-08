@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RecipesApp</string>
-    <string name="button_category">Категории</string>
     <string name="button_favorite">Избранное</string>
+    <string name="content_description_recipe_categories">Изображение обложки категорий рецептов</string>
+    <string name="text_category">Категории</string>
 </resources>
