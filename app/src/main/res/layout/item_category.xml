@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/margin_standard_half"
-    android:background="@drawable/ripple_background"
     android:clickable="true"
     android:focusable="true"
+    android:background="?android:attr/colorControlHighlight"
     app:cardCornerRadius="@dimen/corner_radius">
 
     <LinearLayout
@@ -16,12 +16,15 @@
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/ivCategoryImage"
             android:layout_width="match_parent"
             android:layout_height="130dp"
+            tools:ignore="ContentDescription"
             tools:scaleType="centerCrop"
             tools:src="@drawable/burger" />
 
         <TextView
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:fontFamily="@font/montserrat_alternates_semi_bold"
@@ -32,6 +35,7 @@
             tools:textSize="@dimen/text_size_primary" />
 
         <TextView
+            android:id="@+id/tvDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:fontFamily="@font/montserrat_medium"
