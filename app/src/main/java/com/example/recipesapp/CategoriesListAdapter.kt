@@ -1,8 +1,8 @@
 package com.example.recipesapp
+
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipesapp.databinding.ItemCategoryBinding
@@ -12,41 +12,32 @@ import java.io.InputStream
 class CategoriesListAdapter(private val dataSet: List<Category>) :
     RecyclerView.Adapter<CategoriesListAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private var _binding: ItemCategoryBinding? = null
-        private val binding: ItemCategoryBinding
-            get() = _binding ?:
-            throw IllegalStateException("Binding for ItemCategoryBinding must not be null")
-
-        init {
-            _binding = ItemCategoryBinding.bind(view)
-        }
-
-        fun bind(category: Category) {
-            binding.tvTitle.text = category.title
-            binding.tvDescription.text = category.description
-
-            try {
-                val inputStream: InputStream? = itemView.context?.assets?.open(category.imageUrl)
-                val drawable = Drawable.createFromStream(inputStream, null)
-                binding.ivCategoryImage.setImageDrawable(drawable)
-                inputStream?.close()
-            } catch (e: Exception) {
-                Log.e("!!!", "Image not found ${category.imageUrl}", e)
-            }
-        }
-    }
+    class ViewHolder(val binding: ItemCategoryBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.item_category, viewGroup, false)
+        val binding = ItemCategoryBinding.inflate(LayoutInflater.from(viewGroup.context),
+            viewGroup, false)
 
-        return ViewHolder(view)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.bind(dataSet[position])
+        val binding = viewHolder.binding
+        val category = dataSet[position]
+
+        binding.tvTitle.text = category.title
+        binding.tvDescription.text = category.description
+
+        try {
+            val inputStream: InputStream? = binding.root.context?.assets?.open(category.imageUrl)
+            val drawable = Drawable.createFromStream(inputStream, null)
+            binding.ivCategoryImage.setImageDrawable(drawable)
+            inputStream?.close()
+        } catch (e: Exception) {
+            Log.e("!!!", "Image not found ${category.imageUrl}", e)
+        }
     }
 
     override fun getItemCount() = dataSet.size

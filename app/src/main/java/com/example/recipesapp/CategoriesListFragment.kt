@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.recipesapp.databinding.FragmentListCategoriesBinding
 
 class CategoriesListFragment : Fragment() {
@@ -32,10 +31,7 @@ class CategoriesListFragment : Fragment() {
         val categories = STUB.getCategories()
 
         val adapter = CategoriesListAdapter(categories)
-        categoriesBinding.rvCategories.apply {
-            layoutManager = GridLayoutManager(context, 2)
-            this.adapter = adapter
-        }
+        categoriesBinding.rvCategories.adapter = adapter
     }
 
     override fun onDestroyView() {
