@@ -19,31 +19,27 @@
             android:id="@+id/ivCategoryImage"
             android:layout_width="match_parent"
             android:layout_height="130dp"
+            android:scaleType="centerCrop"
             tools:ignore="ContentDescription"
-            tools:scaleType="centerCrop"
             tools:src="@drawable/burger" />
 
         <TextView
             android:id="@+id/tvTitle"
+            style="@style/CategoryTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:fontFamily="@font/montserrat_alternates_semi_bold"
-            tools:layout_marginStart="@dimen/margin_standard_half"
-            tools:layout_marginTop="@dimen/margin_standard_half"
-            tools:text="Бургеры"
-            tools:textColor="@color/titleTextColor"
-            tools:textSize="@dimen/text_size_primary" />
+            android:layout_marginStart="@dimen/margin_standard_half"
+            android:layout_marginTop="@dimen/margin_standard_half"
+            tools:text="Бургеры" />
 
         <TextView
             android:id="@+id/tvDescription"
+            style="@style/CategoryDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:fontFamily="@font/montserrat_medium"
-            tools:layout_marginHorizontal="@dimen/margin_standard_half"
-            tools:layout_marginVertical="@dimen/margin_standard_half"
-            tools:text="Рецепты всех\nпопулярных видов\nбургеров"
-            tools:textColor="@color/descriptionTextColor"
-            tools:textSize="@dimen/text_size_description" />
+            android:layout_marginHorizontal="@dimen/margin_standard_half"
+            android:layout_marginVertical="@dimen/margin_standard_half"
+            tools:text="Рецепты всех\nпопулярных видов\nбургеров" />
 
     </LinearLayout>
 

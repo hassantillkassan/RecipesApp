@@ -38,6 +38,8 @@ class CategoriesListAdapter(private val dataSet: List<Category>) :
         } catch (e: Exception) {
             Log.e("!!!", "Image not found ${category.imageUrl}", e)
         }
+
+        binding.ivCategoryImage.contentDescription = "Изображение категории ${category.title}"
     }
 
     override fun getItemCount() = dataSet.size
