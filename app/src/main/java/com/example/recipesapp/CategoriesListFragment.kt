@@ -32,9 +32,6 @@ class CategoriesListFragment : Fragment() {
 
         val adapter = CategoriesListAdapter(categories)
         categoriesBinding.rvCategories.adapter = adapter
-
-        val itemDecoration = SpaceItemDecoration(resources.getDimensionPixelSize(R.dimen.item_spacing))
-        categoriesBinding.rvCategories.addItemDecoration(itemDecoration)
     }
 
     override fun onDestroyView() {
