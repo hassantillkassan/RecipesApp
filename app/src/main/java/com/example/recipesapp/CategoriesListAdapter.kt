@@ -12,13 +12,25 @@ import java.io.InputStream
 class CategoriesListAdapter(private val dataSet: List<Category>) :
     RecyclerView.Adapter<CategoriesListAdapter.ViewHolder>() {
 
+    private var itemClickListener: OnItemClickListener? = null
+
+    interface OnItemClickListener {
+        fun onItemClick(category: Category)
+    }
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        itemClickListener = listener
+    }
+
     class ViewHolder(val binding: ItemCategoryBinding) :
         RecyclerView.ViewHolder(binding.root)
 
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemCategoryBinding.inflate(LayoutInflater.from(viewGroup.context),
-            viewGroup, false)
+        val binding = ItemCategoryBinding.inflate(
+            LayoutInflater.from(viewGroup.context),
+            viewGroup, false
+        )
 
         return ViewHolder(binding)
     }
@@ -36,12 +48,20 @@ class CategoriesListAdapter(private val dataSet: List<Category>) :
             binding.ivCategoryImage.setImageDrawable(drawable)
             inputStream?.close()
         } catch (e: Exception) {
-            Log.e("!!!", "Image not found ${category.imageUrl}", e)
+            Log.e("CategoriesListAdapter", "Image not found ${category.imageUrl}", e)
         }
 
-        binding.ivCategoryImage.contentDescription = "Изображение категории ${category.title}"
+        binding.ivCategoryImage.contentDescription = binding.root.context.getString(
+            R.string.category_image_description,
+            category.title
+        )
+
+        binding.root.setOnClickListener {
+            itemClickListener?.onItemClick(category)
+        }
     }
 
     override fun getItemCount() = dataSet.size
 
 }
+

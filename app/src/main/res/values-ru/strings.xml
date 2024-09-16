@@ -4,4 +4,5 @@
     <string name="button_favorite">Избранное</string>
     <string name="content_description_recipe_categories">Изображение обложки категорий рецептов</string>
     <string name="text_category">Категории</string>
+    <string name="category_image_description">Изображение категории %s</string>
 </resources>
