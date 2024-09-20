@@ -10,7 +10,7 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.example.recipesapp.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnNavigationListener {
 
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding
@@ -36,11 +36,32 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonCategory.setOnClickListener {
-            navigateToFragment<CategoriesListFragment>()
+            navigateToCategories()
         }
 
         binding.buttonFavorites.setOnClickListener {
-            navigateToFragment<FavoritesFragment>()
+            navigateToFavorites()
+        }
+    }
+
+    override fun navigateToCategories() {
+        navigateToFragment<CategoriesListFragment>()
+    }
+
+    override fun navigateToFavorites() {
+        navigateToFragment<FavoritesFragment>()
+    }
+
+    override fun navigateToRecipes(bundle: Bundle) {
+        val recipesListFragment = RecipesListFragment.newInstance(
+            bundle.getInt(RecipesListFragment.ARG_CATEGORY_ID),
+            bundle.getString(RecipesListFragment.ARG_CATEGORY_NAME) ?: "",
+            bundle.getString(RecipesListFragment.ARG_CATEGORY_IMAGE_URL) ?: ""
+        )
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.mainContainer, recipesListFragment)
+            addToBackStack(null)
         }
     }
 
