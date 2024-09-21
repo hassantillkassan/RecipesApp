@@ -45,19 +45,17 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
     }
 
     override fun navigateToCategories() {
-        navigateToFragment<CategoriesListFragment>()
+        if (supportFragmentManager.findFragmentById(R.id.mainContainer) !is CategoriesListFragment)
+            navigateToFragment<CategoriesListFragment>()
     }
 
     override fun navigateToFavorites() {
-        navigateToFragment<FavoritesFragment>()
+        if (supportFragmentManager.findFragmentById(R.id.mainContainer) !is FavoritesFragment)
+            navigateToFragment<FavoritesFragment>()
     }
 
     override fun navigateToRecipes(bundle: Bundle) {
-        val recipesListFragment = RecipesListFragment.newInstance(
-            bundle.getInt(RecipesListFragment.ARG_CATEGORY_ID),
-            bundle.getString(RecipesListFragment.ARG_CATEGORY_NAME) ?: "",
-            bundle.getString(RecipesListFragment.ARG_CATEGORY_IMAGE_URL) ?: ""
-        )
+        val recipesListFragment = RecipesListFragment.newInstance(bundle)
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             replace(R.id.mainContainer, recipesListFragment)
@@ -71,8 +69,6 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
     }
 
     private inline fun <reified T : Fragment> navigateToFragment() {
-        supportFragmentManager.popBackStack()
-
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             replace<T>(binding.mainContainer.id)

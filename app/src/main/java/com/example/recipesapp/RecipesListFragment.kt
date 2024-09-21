@@ -32,9 +32,11 @@ class RecipesListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        categoryId = requireArguments().getInt(ARG_CATEGORY_ID)
-        categoryName = requireArguments().getString(ARG_CATEGORY_NAME) ?: ""
-        categoryImageUrl = requireArguments().getString(ARG_CATEGORY_IMAGE_URL) ?: ""
+        arguments?.let { bundle ->
+            categoryId = bundle.getInt(CategoriesListFragment.ARG_CATEGORY_ID)
+            categoryName = bundle.getString(CategoriesListFragment.ARG_CATEGORY_NAME) ?: ""
+            categoryImageUrl = bundle.getString(CategoriesListFragment.ARG_CATEGORY_IMAGE_URL) ?: ""
+        }
 
         recipesBinding.tvCategoryName.text = categoryName
 
@@ -61,24 +63,8 @@ class RecipesListFragment : Fragment() {
     }
 
     companion object {
-        const val ARG_CATEGORY_ID = "category_id"
-        const val ARG_CATEGORY_NAME = "category_name"
-        const val ARG_CATEGORY_IMAGE_URL = "category_image_url"
-
-        fun newInstance(
-            categoryId: Int,
-            categoryName: String,
-            categoryImageUrl: String,
-        ): RecipesListFragment {
-            val fragment = RecipesListFragment()
-            val args = Bundle().apply {
-                putInt(ARG_CATEGORY_ID, categoryId)
-                putString(ARG_CATEGORY_NAME, categoryName)
-                putString(ARG_CATEGORY_IMAGE_URL, categoryImageUrl)
-            }
-
-            fragment.arguments = args
-            return fragment
+        fun newInstance(args: Bundle) = RecipesListFragment().apply {
+            arguments = args
         }
     }
 

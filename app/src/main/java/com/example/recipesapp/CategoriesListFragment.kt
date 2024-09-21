@@ -1,11 +1,11 @@
 package com.example.recipesapp
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import com.example.recipesapp.databinding.FragmentListCategoriesBinding
 
 class CategoriesListFragment : Fragment() {
@@ -15,16 +15,11 @@ class CategoriesListFragment : Fragment() {
         get() = _categoriesBinding
             ?: throw IllegalStateException("Binding for FragmentListCategoriesBinding must not be null")
 
-    private var navigationListener: OnNavigationListener? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        if (context is OnNavigationListener) {
-            navigationListener = context
-        } else {
-            throw RuntimeException("$context must implement OnNavigationListener")
-        }
+    private val navigationListener: OnNavigationListener by lazy {
+        (activity as? OnNavigationListener)
+            ?: throw RuntimeException(
+                "${requireActivity()::class::qualifiedName} must implement OnNavigationListener"
+            )
     }
 
     override fun onCreateView(
@@ -57,19 +52,25 @@ class CategoriesListFragment : Fragment() {
             val categoryName = selectedCategory.title
             val categoryImageUrl = selectedCategory.imageUrl
 
-            val bundle = Bundle().apply {
-                putInt(RecipesListFragment.ARG_CATEGORY_ID, categoryId)
-                putString(RecipesListFragment.ARG_CATEGORY_NAME, categoryName)
-                putString(RecipesListFragment.ARG_CATEGORY_IMAGE_URL, categoryImageUrl)
-            }
+            val bundle = bundleOf(
+                ARG_CATEGORY_ID to categoryId,
+                ARG_CATEGORY_NAME to categoryName,
+                ARG_CATEGORY_IMAGE_URL to categoryImageUrl
+            )
 
-            navigationListener?.navigateToRecipes(bundle)
+            navigationListener.navigateToRecipes(bundle)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _categoriesBinding = null
+    }
+
+    companion object {
+        const val ARG_CATEGORY_ID = "category_id"
+        const val ARG_CATEGORY_NAME = "category_name"
+        const val ARG_CATEGORY_IMAGE_URL = "category_image_url"
     }
 
 }
