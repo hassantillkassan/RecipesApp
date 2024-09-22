@@ -9,18 +9,11 @@ import com.example.recipesapp.databinding.ItemCategoryBinding
 
 import java.io.InputStream
 
-class CategoriesListAdapter(private val dataSet: List<Category>) :
+class CategoriesListAdapter(
+    private val dataSet: List<Category>,
+    private val onItemClick: (Int) -> Unit
+) :
     RecyclerView.Adapter<CategoriesListAdapter.ViewHolder>() {
-
-    private var itemClickListener: OnItemClickListener? = null
-
-    interface OnItemClickListener {
-        fun onItemClick(category: Category)
-    }
-
-    fun setOnItemClickListener(listener: OnItemClickListener) {
-        itemClickListener = listener
-    }
 
     class ViewHolder(val binding: ItemCategoryBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -57,7 +50,7 @@ class CategoriesListAdapter(private val dataSet: List<Category>) :
         )
 
         binding.root.setOnClickListener {
-            itemClickListener?.onItemClick(category)
+            onItemClick(category.id)
         }
     }
 
