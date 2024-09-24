@@ -63,6 +63,15 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
         }
     }
 
+    override fun openRecipeByRecipeId(recipeId: Int) {
+        val recipeFragment = RecipeFragment.newInstance(recipeId)
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.mainContainer, recipeFragment)
+            addToBackStack(null)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

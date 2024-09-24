@@ -18,7 +18,7 @@ class CategoriesListFragment : Fragment() {
     private val navigationListener: OnNavigationListener by lazy {
         (activity as? OnNavigationListener)
             ?: throw RuntimeException(
-                "${requireActivity()::class::qualifiedName} must implement OnNavigationListener"
+                "${requireActivity()::class.qualifiedName} must implement OnNavigationListener"
             )
     }
 

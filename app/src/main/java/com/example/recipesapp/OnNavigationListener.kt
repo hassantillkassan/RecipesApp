@@ -6,4 +6,5 @@ interface OnNavigationListener {
     fun navigateToCategories()
     fun navigateToFavorites()
     fun navigateToRecipes(bundle: Bundle)
+    fun openRecipeByRecipeId(recipeId: Int)
 }

@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
 import java.io.InputStream
 
@@ -16,6 +17,13 @@ class RecipesListFragment : Fragment() {
     private val recipesBinding: FragmentListRecipesBinding
         get() = _recipesBinding
             ?: throw IllegalStateException("Binding for FragmentListRecipesBinding must not be null")
+
+    private val navigationListener: OnNavigationListener by lazy {
+        (activity as? OnNavigationListener)
+            ?: throw RuntimeException(
+                "${requireActivity()::class.qualifiedName} must implement OnNavigationListener"
+            )
+    }
 
     private var categoryId: Int = 0
     private var categoryName: String = ""
@@ -55,6 +63,18 @@ class RecipesListFragment : Fragment() {
             categoryName
         )
 
+        initRecycler()
+    }
+
+    private fun initRecycler() {
+        val recipes = STUB.getRecipesByCategoryId(categoryId)
+
+        val adapter = RecipesListAdapter(recipes) { recipeId ->
+            navigationListener.openRecipeByRecipeId(recipeId)
+        }
+
+        recipesBinding.rvRecipes.adapter = adapter
+        recipesBinding.rvRecipes.layoutManager = LinearLayoutManager(context)
     }
 
     override fun onDestroyView() {
