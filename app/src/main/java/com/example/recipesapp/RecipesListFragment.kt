@@ -59,7 +59,7 @@ class RecipesListFragment : Fragment() {
             }
         }
         recipesBinding.ivCategoryCoverImage.contentDescription = getString(
-            R.string.category_image_description,
+            R.string.text_category_image_description,
             categoryName
         )
 
@@ -70,7 +70,7 @@ class RecipesListFragment : Fragment() {
         val recipes = STUB.getRecipesByCategoryId(categoryId)
 
         val adapter = RecipesListAdapter(recipes) { recipeId ->
-            navigationListener.openRecipeByRecipeId(recipeId)
+            navigationListener.navigateToRecipe(recipeId)
         }
 
         recipesBinding.rvRecipes.adapter = adapter

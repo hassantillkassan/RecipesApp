@@ -45,7 +45,7 @@ class CategoriesListAdapter(
         }
 
         binding.ivCategoryImage.contentDescription = binding.root.context.getString(
-            R.string.category_image_description,
+            R.string.text_category_image_description,
             category.title
         )
 

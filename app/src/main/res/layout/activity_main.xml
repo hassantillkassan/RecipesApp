@@ -53,7 +53,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/favoriteButtonColor"
             android:maxLines="1"
-            android:text="@string/button_favorite"
+            android:text="@string/text_button_favorite"
             app:icon="@drawable/ic_heart"
             app:iconGravity="textEnd"
             app:iconSize="@dimen/icon_size_heart_favorite_button" />

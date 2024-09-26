@@ -58,7 +58,7 @@ class CategoriesListFragment : Fragment() {
                 ARG_CATEGORY_IMAGE_URL to categoryImageUrl
             )
 
-            navigationListener.navigateToRecipes(bundle)
+            navigationListener.navigateToRecipesList(bundle)
         }
     }
 

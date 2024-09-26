@@ -27,27 +27,28 @@ class RecipesListAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val binding = viewHolder.binding
         val recipe = dataSet[position]
 
-        binding.tvTitle.text = recipe.title
+        with(viewHolder.binding) {
+            tvTitle.text = recipe.title
 
-        try {
-            val inputStream: InputStream = binding.root.context.assets.open(recipe.imageUrl)
-            val drawable = Drawable.createFromStream(inputStream, null)
-            binding.ivRecipeImage.setImageDrawable(drawable)
-            inputStream.close()
-        } catch (e: Exception) {
-            Log.e("RecipesListAdapter", "Image not found ${recipe.imageUrl}", e)
-        }
+            try {
+                val inputStream: InputStream = root.context.assets.open(recipe.imageUrl)
+                val drawable = Drawable.createFromStream(inputStream, null)
+                ivRecipeImage.setImageDrawable(drawable)
+                inputStream.close()
+            } catch (e: Exception) {
+                Log.e("RecipesListAdapter", "Image not found ${recipe.imageUrl}", e)
+            }
 
-        binding.ivRecipeImage.contentDescription = binding.root.context.getString(
-            R.string.recipe_image_description,
-            recipe.title
-        )
+            ivRecipeImage.contentDescription = root.context.getString(
+                R.string.text_recipe_image_description,
+                recipe.title
+            )
 
-        binding.root.setOnClickListener{
-            onItemClick(recipe.id)
+            root.setOnClickListener{
+                onItemClick(recipe.id)
+            }
         }
     }
 
