@@ -37,6 +37,6 @@ class RecipeFragment : Fragment() {
     }
 
     companion object {
-        private const val ARG_RECIPE_ID = "recipe_id"
+        const val ARG_RECIPE_ID = "recipe_id"
     }
 }
