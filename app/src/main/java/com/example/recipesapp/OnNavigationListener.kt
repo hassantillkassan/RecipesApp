@@ -5,5 +5,6 @@ import android.os.Bundle
 interface OnNavigationListener {
     fun navigateToCategories()
     fun navigateToFavorites()
-    fun navigateToRecipes(bundle: Bundle)
+    fun navigateToRecipesList(bundle: Bundle)
+    fun navigateToRecipe(recipeId: Int)
 }

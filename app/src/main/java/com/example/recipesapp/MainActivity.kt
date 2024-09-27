@@ -2,6 +2,7 @@ package com.example.recipesapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -54,11 +55,22 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
             navigateToFragment<FavoritesFragment>()
     }
 
-    override fun navigateToRecipes(bundle: Bundle) {
+    override fun navigateToRecipesList(bundle: Bundle) {
         val recipesListFragment = RecipesListFragment.newInstance(bundle)
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             replace(R.id.mainContainer, recipesListFragment)
+            addToBackStack(null)
+        }
+    }
+
+    override fun navigateToRecipe(recipeId: Int) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace<RecipeFragment>(
+                R.id.mainContainer,
+                args = bundleOf(RecipeFragment.ARG_RECIPE_ID to recipeId)
+                )
             addToBackStack(null)
         }
     }

@@ -18,7 +18,7 @@ class CategoriesListFragment : Fragment() {
     private val navigationListener: OnNavigationListener by lazy {
         (activity as? OnNavigationListener)
             ?: throw RuntimeException(
-                "${requireActivity()::class::qualifiedName} must implement OnNavigationListener"
+                "${requireActivity()::class.qualifiedName} must implement OnNavigationListener"
             )
     }
 
@@ -58,7 +58,7 @@ class CategoriesListFragment : Fragment() {
                 ARG_CATEGORY_IMAGE_URL to categoryImageUrl
             )
 
-            navigationListener.navigateToRecipes(bundle)
+            navigationListener.navigateToRecipesList(bundle)
         }
     }
 
