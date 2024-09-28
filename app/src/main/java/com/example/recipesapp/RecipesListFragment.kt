@@ -70,7 +70,9 @@ class RecipesListFragment : Fragment() {
         val recipes = STUB.getRecipesByCategoryId(categoryId)
 
         val adapter = RecipesListAdapter(recipes) { recipeId ->
-            navigationListener.navigateToRecipe(recipeId)
+            val recipe = STUB.getRecipeById(recipeId)
+                ?: throw IllegalArgumentException("Recipe not found with id $recipeId")
+            navigationListener.navigateToRecipe(recipe)
         }
 
         recipesBinding.rvRecipes.adapter = adapter
