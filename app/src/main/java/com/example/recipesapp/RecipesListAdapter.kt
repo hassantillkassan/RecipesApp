@@ -10,7 +10,7 @@ import java.io.InputStream
 
 class RecipesListAdapter(
     private val dataSet: List<Recipe>,
-    private val onItemClick: (Int) -> Unit
+    private val onItemClick: (Recipe) -> Unit
 ) :
     RecyclerView.Adapter<RecipesListAdapter.ViewHolder>() {
 
@@ -47,7 +47,7 @@ class RecipesListAdapter(
             )
 
             root.setOnClickListener{
-                onItemClick(recipe.id)
+                onItemClick(recipe)
             }
         }
     }

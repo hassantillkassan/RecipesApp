@@ -1,5 +1,6 @@
 package com.example.recipesapp
 
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,12 +16,17 @@ class RecipeFragment : Fragment() {
         get() = _recipeBinding
             ?: throw IllegalStateException("Binding for FragmentRecipeBinding must not be null")
 
-    private var recipeId: Int? = null
+    private var recipe: Recipe? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        recipeId = arguments?.getInt(ARG_RECIPE_ID) ?: throw IllegalArgumentException("recipe_id is required")
+        recipe = if (Build.VERSION.SDK_INT >= 33) {
+            arguments?.getParcelable(ARG_RECIPE_ID, Recipe::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getParcelable(ARG_RECIPE_ID)
+        } ?: throw IllegalArgumentException("Recipe must be provided in arguments")
     }
 
     override fun onCreateView(
@@ -29,6 +35,14 @@ class RecipeFragment : Fragment() {
     ): View {
         _recipeBinding = FragmentRecipeBinding.inflate(inflater, container, false)
         return recipeBinding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        recipe?.let {
+            recipeBinding.tvRecipe.text = it.title
+        }
     }
 
     override fun onDestroy() {

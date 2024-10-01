@@ -64,12 +64,12 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
         }
     }
 
-    override fun navigateToRecipe(recipeId: Int) {
+    override fun navigateToRecipe(recipe: Recipe) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             replace<RecipeFragment>(
                 R.id.mainContainer,
-                args = bundleOf(RecipeFragment.ARG_RECIPE_ID to recipeId)
+                args = bundleOf(RecipeFragment.ARG_RECIPE_ID to recipe)
                 )
             addToBackStack(null)
         }

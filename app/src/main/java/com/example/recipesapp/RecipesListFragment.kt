@@ -69,8 +69,8 @@ class RecipesListFragment : Fragment() {
     private fun initRecycler() {
         val recipes = STUB.getRecipesByCategoryId(categoryId)
 
-        val adapter = RecipesListAdapter(recipes) { recipeId ->
-            navigationListener.navigateToRecipe(recipeId)
+        val adapter = RecipesListAdapter(recipes) { recipe ->
+            navigationListener.navigateToRecipe(recipe)
         }
 
         recipesBinding.rvRecipes.adapter = adapter
