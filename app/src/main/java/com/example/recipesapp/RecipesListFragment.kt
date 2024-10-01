@@ -69,9 +69,7 @@ class RecipesListFragment : Fragment() {
     private fun initRecycler() {
         val recipes = STUB.getRecipesByCategoryId(categoryId)
 
-        val adapter = RecipesListAdapter(recipes) { recipeId ->
-            val recipe = STUB.getRecipeById(recipeId)
-                ?: throw IllegalArgumentException("Recipe not found with id $recipeId")
+        val adapter = RecipesListAdapter(recipes) { recipe ->
             navigationListener.navigateToRecipe(recipe)
         }
 
