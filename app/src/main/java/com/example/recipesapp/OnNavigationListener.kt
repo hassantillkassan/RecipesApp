@@ -6,5 +6,5 @@ interface OnNavigationListener {
     fun navigateToCategories()
     fun navigateToFavorites()
     fun navigateToRecipesList(bundle: Bundle)
-    fun navigateToRecipe(recipeId: Int)
+    fun navigateToRecipe(recipe: Recipe)
 }
