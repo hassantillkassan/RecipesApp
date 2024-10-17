@@ -32,5 +32,22 @@
         <item name="android:fontFamily">@font/montserrat_medium</item>
         <item name="android:textColor">@color/descriptionTextColor</item>
     </style>
+    
+    <style name="StyleTitle20" parent="ShapeDrawable">
+        <item name="android:textColor">@color/recipeCardSubtitle</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <style name="RecipeDescription" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/text_size_primary</item>
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="android:textColor">@color/descriptionTextColor</item>
+    </style>
+
+    <style name="RoundedRecyclerView">
+        <item name="android:background">@drawable/bg_rounded_corner_white</item>
+        <item name="android:layout_marginHorizontal">@dimen/margin_standard</item>
+        <item name="android:layout_marginTop">@dimen/margin_standard</item>
+    </style>
 
 </resources>
