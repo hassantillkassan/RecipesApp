@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/item_padding">
+    android:padding="@dimen/main_space_12">
 
     <TextView
         android:id="@+id/tvIngredientDescription"
@@ -14,6 +14,7 @@
         android:textAllCaps="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvIngredientQuantity"
         tools:text="Булочка для гамбургеров" />
 
     <TextView

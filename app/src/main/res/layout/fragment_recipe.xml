@@ -15,7 +15,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="224dp">
+            android:layout_height="@dimen/cover_height">
 
             <ImageView
                 android:id="@+id/ivRecipeImage"
@@ -50,11 +50,9 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvIngredients"
+            style="@style/RoundedRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_standard"
-            android:layout_marginTop="@dimen/margin_standard"
-            android:background="@color/white" />
+            android:layout_height="wrap_content" />
 
         <TextView
             style="@style/StyleTitle20"
@@ -66,11 +64,9 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvMethod"
+            style="@style/RoundedRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_standard"
-            android:layout_marginTop="@dimen/margin_standard"
-            android:background="@color/white" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

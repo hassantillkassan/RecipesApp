@@ -44,11 +44,10 @@
         <item name="android:textColor">@color/descriptionTextColor</item>
     </style>
 
-    <style name="RecyclerViewDivider">
-        <item name="dividerThickness">@dimen/divider_thickness</item>
-        <item name="dividerColor">@color/dividerColor</item>
-        <item name="dividerInsetStart">@dimen/divider_inset_start</item>
-        <item name="dividerInsetEnd">@dimen/divider_inset_end</item>
+    <style name="RoundedRecyclerView">
+        <item name="android:background">@drawable/bg_rounded_corner_white</item>
+        <item name="android:layout_marginHorizontal">@dimen/margin_standard</item>
+        <item name="android:layout_marginTop">@dimen/margin_standard</item>
     </style>
 
 </resources>

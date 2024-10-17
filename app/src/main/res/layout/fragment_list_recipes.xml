@@ -10,7 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="224dp">
+        android:layout_height="@dimen/cover_height">
 
         <ImageView
             android:id="@+id/ivCategoryCoverImage"
