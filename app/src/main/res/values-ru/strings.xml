@@ -6,4 +6,6 @@
     <string name="text_category">Категории</string>
     <string name="text_category_image_description">Изображение категории %s</string>
     <string name="text_recipe_image_description">Изображение рецепта %s</string>
+    <string name="text_ingredients_title">Ингредиенты</string>
+    <string name="text_method_title">Способ приготовления</string>
 </resources>

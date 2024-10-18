@@ -7,4 +7,6 @@
     <color name="favoriteButtonColor">#E13E3E</color>
     <color name="titleTextColor">#5F3678</color>
     <color name="descriptionTextColor">#666666</color>
+    <color name="recipeCardSubtitle">#422952</color>
+    <color name="dividerColor">#F5F5F5</color>
 </resources>
