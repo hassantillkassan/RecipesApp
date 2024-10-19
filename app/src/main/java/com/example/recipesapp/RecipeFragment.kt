@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.databinding.FragmentRecipeBinding
 import com.google.android.material.divider.MaterialDividerItemDecoration
@@ -23,6 +25,9 @@ class RecipeFragment : Fragment() {
             ?: throw IllegalStateException("Binding for FragmentRecipeBinding must not be null")
 
     private var recipe: Recipe? = null
+    private var ingredientsAdapter: IngredientsAdapter? = null
+
+    private val viewModel: RecipeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +53,9 @@ class RecipeFragment : Fragment() {
 
         initRecycler()
         initUI()
+        viewModel.portions.observe(viewLifecycleOwner) { portions ->
+            ingredientsAdapter?.updateIngredients(portions)
+        }
     }
 
     private fun initRecycler() {
@@ -64,7 +72,7 @@ class RecipeFragment : Fragment() {
                 isLastItemDecorated = false
             }
 
-            val ingredientsAdapter = IngredientsAdapter(recipe.ingredients)
+            ingredientsAdapter = IngredientsAdapter(recipe.ingredients)
             recipeBinding.rvIngredients.adapter = ingredientsAdapter
             recipeBinding.rvIngredients.layoutManager = LinearLayoutManager(context)
             recipeBinding.rvIngredients.addItemDecoration(divider)
@@ -73,6 +81,31 @@ class RecipeFragment : Fragment() {
             recipeBinding.rvMethod.adapter = methodAdapter
             recipeBinding.rvMethod.layoutManager = LinearLayoutManager(context)
             recipeBinding.rvMethod.addItemDecoration(divider)
+
+            recipeBinding.seekBarPortions.max = 5
+            recipeBinding.seekBarPortions.min = 1
+            recipeBinding.seekBarPortions.progress = 1
+
+            recipeBinding.seekBarPortions.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    val portions = if (progress < 1) 1 else progress
+                    recipeBinding.tvPortionQuantity.text = getString(R.string.text_portions, portions)
+
+//                    ingredientsAdapter.updateIngredients(portions)
+                    viewModel.setPortions(portions)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                }
+            })
+
+            val initialPortions = recipeBinding.seekBarPortions.progress
+            recipeBinding.tvPortionQuantity.text = getString(R.string.text_portions, initialPortions)
+//            ingredientsAdapter.updateIngredients(initialPortions)
+            viewModel.setPortions(initialPortions)
         }
     }
 
