@@ -4,7 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipesapp.databinding.ItemIngredientBinding
-import java.util.Locale
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 class IngredientsAdapter(
     private val dataSet: List<Ingredient>
@@ -31,11 +32,15 @@ class IngredientsAdapter(
         with(viewHolder.binding) {
             tvIngredientDescription.text = ingredient.description
 
-            val calculatedQuantity = ingredient.quantity.toDouble() * quantity.toDouble()
-            val displayQuantity = if (calculatedQuantity % 1 == 0.0)
-                calculatedQuantity.toInt().toString()
-            else
-                String.format(Locale.getDefault(),"%.1f", calculatedQuantity)
+            val quantityBD = BigDecimal(quantity)
+            val ingredientCountBD = BigDecimal(ingredient.quantity)
+
+            val totalQuantity = ingredientCountBD.multiply(quantityBD)
+
+            val displayQuantity = totalQuantity
+                .setScale(1, RoundingMode.HALF_UP)
+                .stripTrailingZeros()
+                .toPlainString()
 
             tvIngredientQuantity.text = root.context.getString(
                 R.string.text_ingredient_quantity,
@@ -47,12 +52,9 @@ class IngredientsAdapter(
 
     override fun getItemCount() = dataSet.size
 
+    @Suppress("NotifyDataSetChanged")
     fun updateIngredients(progress: Int) {
-        if (quantity != progress) {
-            quantity = progress
-            for (i in 0 until itemCount) {
-                notifyItemChanged(i)
-            }
-        }
+        quantity = progress
+        notifyDataSetChanged()
     }
 }
