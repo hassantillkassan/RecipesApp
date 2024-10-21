@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.databinding.FragmentRecipeBinding
@@ -73,6 +74,31 @@ class RecipeFragment : Fragment() {
             recipeBinding.rvMethod.adapter = methodAdapter
             recipeBinding.rvMethod.layoutManager = LinearLayoutManager(context)
             recipeBinding.rvMethod.addItemDecoration(divider)
+
+            recipeBinding.seekBarPortions.setOnSeekBarChangeListener(object :
+                SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    recipeBinding.tvPortionQuantity.text =
+                        getString(R.string.text_portions, progress)
+
+                    ingredientsAdapter.updateIngredients(progress)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                }
+            })
+
+            val initialPortions = recipeBinding.seekBarPortions.progress
+            recipeBinding.tvPortionQuantity.text =
+                getString(R.string.text_portions, initialPortions)
+            ingredientsAdapter.updateIngredients(initialPortions)
         }
     }
 
