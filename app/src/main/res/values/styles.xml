@@ -10,7 +10,7 @@
 
     <style name="StyleNavButton" parent="Widget.Material3.Button">
         <item name="android:textAppearance">@style/StyleTitle14</item>
-        <item name="cornerRadius">@dimen/margin_standard_half</item>
+        <item name="cornerRadius">@dimen/half_space_8</item>
         <item name="android:padding">0dp</item>
     </style>
 
@@ -46,8 +46,8 @@
 
     <style name="RoundedRecyclerView">
         <item name="android:background">@drawable/bg_rounded_corner_white</item>
-        <item name="android:layout_marginHorizontal">@dimen/margin_standard</item>
-        <item name="android:layout_marginTop">@dimen/margin_standard</item>
+        <item name="android:layout_marginHorizontal">@dimen/default_space_16</item>
+        <item name="android:layout_marginTop">@dimen/default_space_16</item>
     </style>
 
     <style name="PortionQuantity">

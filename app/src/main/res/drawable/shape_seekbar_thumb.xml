@@ -2,9 +2,9 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
     <size
-        android:width="@dimen/seekbar_thumb_width"
+        android:width="@dimen/half_space_8"
         android:height="@dimen/seekbar_thumb_height" />
     <solid android:color="@color/categoryButtonColor" />
-    <corners android:radius="@dimen/seekbar_thumb_corner_radius" />
+    <corners android:radius="@dimen/size_small" />
 
 </shape>
