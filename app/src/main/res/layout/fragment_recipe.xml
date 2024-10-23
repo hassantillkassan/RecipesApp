@@ -31,8 +31,8 @@
                 style="@style/ShapeDrawable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_standard"
-                android:layout_marginBottom="@dimen/margin_standard"
+                android:layout_marginStart="@dimen/default_space_16"
+                android:layout_marginBottom="@dimen/default_space_16"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="Burger Recipe" />
@@ -44,8 +44,8 @@
             style="@style/StyleTitle20"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/margin_standard"
-            android:layout_marginTop="@dimen/margin_standard"
+            android:layout_marginStart="@dimen/default_space_16"
+            android:layout_marginTop="@dimen/default_space_16"
             android:text="@string/text_ingredients_title" />
 
         <TextView
@@ -53,17 +53,18 @@
             style="@style/PortionQuantity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_standard"
+            android:layout_marginStart="@dimen/default_space_16"
             android:text="@string/text_portions"
             tools:text="Порции: 3" />
 
         <SeekBar
             android:id="@+id/seekBarPortions"
+            style="@style/styleSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="5"
             android:min="1"
-            android:progress="1"/>
+            android:progress="1" />
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -76,8 +77,8 @@
             style="@style/StyleTitle20"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/margin_standard"
-            android:layout_marginTop="@dimen/margin_standard"
+            android:layout_marginStart="@dimen/default_space_16"
+            android:layout_marginTop="@dimen/default_space_16"
             android:text="@string/text_method_title" />
 
         <androidx.recyclerview.widget.RecyclerView

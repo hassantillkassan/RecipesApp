@@ -10,4 +10,5 @@
     <color name="recipeCardSubtitle">#422952</color>
     <color name="dividerColor">#F5F5F5</color>
     <color name="portionQuantityTextColor">#626466</color>
+    <color name="seekBarProgressColor">#A1A9F9</color>
 </resources>
