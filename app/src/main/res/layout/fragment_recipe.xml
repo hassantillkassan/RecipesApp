@@ -27,8 +27,8 @@
 
             <ImageButton
                 android:id="@+id/btnFavorite"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/favorite_icon_size"
+                android:layout_height="@dimen/favorite_icon_size"
                 android:layout_marginTop="@dimen/default_space_16"
                 android:layout_marginEnd="@dimen/default_space_16"
                 android:background="?attr/selectableItemBackgroundBorderless"
