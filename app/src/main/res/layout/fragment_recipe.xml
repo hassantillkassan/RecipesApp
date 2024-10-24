@@ -25,6 +25,18 @@
                 tools:ignore="ContentDescription"
                 tools:src="@drawable/burger" />
 
+            <ImageButton
+                android:id="@+id/btnFavorite"
+                android:layout_width="@dimen/favorite_icon_size"
+                android:layout_height="@dimen/favorite_icon_size"
+                android:layout_marginTop="@dimen/default_space_16"
+                android:layout_marginEnd="@dimen/default_space_16"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/text_button_favorite"
+                android:scaleType="fitCenter"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/ic_heart_filled" />
 
             <TextView
                 android:id="@+id/tvRecipe"

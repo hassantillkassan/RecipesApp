@@ -20,6 +20,7 @@
     <dimen name="seekbar_thumb_height">30dp</dimen>
     <dimen name="icon_size_heart_favorite_button">24dp</dimen>
     <dimen name="cover_height">224dp</dimen>
+    <dimen name="favorite_icon_size">40dp</dimen>
 
 
 </resources>
