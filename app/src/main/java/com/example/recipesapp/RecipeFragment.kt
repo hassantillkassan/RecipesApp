@@ -1,5 +1,6 @@
 package com.example.recipesapp
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -30,21 +31,12 @@ class RecipeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (savedInstanceState != null) {
-            isFavorite = savedInstanceState.getBoolean(STATE_IS_FAVORITE,false)
-        }
-
         recipe = if (Build.VERSION.SDK_INT >= 33) {
             arguments?.getParcelable(ARG_RECIPE_ID, Recipe::class.java)
         } else {
             @Suppress("DEPRECATION")
             arguments?.getParcelable(ARG_RECIPE_ID)
         } ?: throw IllegalArgumentException("Recipe must be provided in arguments")
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean(STATE_IS_FAVORITE, isFavorite)
     }
 
     override fun onCreateView(
@@ -60,6 +52,13 @@ class RecipeFragment : Fragment() {
 
         initRecycler()
         initUI()
+        checkIfFavorite()
+    }
+
+    private fun checkIfFavorite() {
+        val favorites = getFavorites()
+        isFavorite = favorites.contains(recipe?.id.toString())
+        updateFavoriteIcon()
     }
 
     private fun initRecycler() {
@@ -134,11 +133,16 @@ class RecipeFragment : Fragment() {
 
             updateFavoriteIcon()
             recipeBinding.btnFavorite.setOnClickListener {
-                isFavorite = !isFavorite
-                if (isFavorite) {
-                    recipeBinding.btnFavorite.setImageResource(R.drawable.ic_heart_filled)
-                } else {
-                    recipeBinding.btnFavorite.setImageResource(R.drawable.ic_heart_empty)
+                val favorites = getFavorites()
+                recipe.id.toString().let { recipeId ->
+                    if (isFavorite) {
+                        favorites.remove(recipeId)
+                    } else {
+                        favorites.add(recipeId)
+                    }
+                    saveFavorites(favorites)
+                    isFavorite = !isFavorite
+                    updateFavoriteIcon()
                 }
             }
         }
@@ -151,6 +155,21 @@ class RecipeFragment : Fragment() {
             recipeBinding.btnFavorite.setImageResource(R.drawable.ic_heart_empty)
     }
 
+    private fun saveFavorites(favorites: Set<String>) {
+        val sharedPrefs =
+            requireContext().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPrefs.edit().putStringSet(FAVORITES_KEY, favorites).apply()
+    }
+
+    private fun getFavorites(): MutableSet<String> {
+        val sharedPrefs =
+            requireContext().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+        val favorites =
+            sharedPrefs.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
+
+        return HashSet(favorites)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _recipeBinding = null
@@ -158,6 +177,7 @@ class RecipeFragment : Fragment() {
 
     companion object {
         const val ARG_RECIPE_ID = "recipe_id"
-        private const val STATE_IS_FAVORITE = "state_is_favorite"
+        private const val SHARED_PREFS_NAME = "favorite_recipes_prefs"
+        private const val FAVORITES_KEY = "favorites_recipes"
     }
 }
