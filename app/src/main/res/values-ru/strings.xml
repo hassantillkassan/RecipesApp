@@ -9,4 +9,7 @@
     <string name="text_ingredients_title">Ингредиенты</string>
     <string name="text_method_title">Способ приготовления</string>
     <string name="text_portions">Порции: %d</string>
+    <string name="text_favorites_image_description">Изображение обложки избранного</string>
+    <string name="text_empty_favorites">Вы ещё не добавили ни одного рецепта в избранное</string>
+    <string name="warning_recipe_not_found">Рецепт не найден</string>
 </resources>
