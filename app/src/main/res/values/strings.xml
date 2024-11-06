@@ -10,4 +10,7 @@
     <string name="text_method_step" translatable="false">%1$d. %2$s</string>
     <string name="text_ingredient_quantity" translatable="false">%1$s %2$s</string>
     <string name="text_portions">Portions: %d</string>
+    <string name="text_favorites_image_description">Cover image of your favorites</string>
+    <string name="text_empty_favorites">You haven\'t added any recipes to your favorites yet</string>
+    <string name="warning_recipe_not_found">Recipe not found</string>
 </resources>
