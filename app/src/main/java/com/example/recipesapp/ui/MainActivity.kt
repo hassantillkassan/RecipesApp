@@ -12,6 +12,7 @@ import androidx.fragment.app.replace
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ActivityMainBinding
 import com.example.recipesapp.model.Recipe
+import com.example.recipesapp.ui.recipes.detail.RecipeFragment
 
 class MainActivity : AppCompatActivity(), OnNavigationListener {
 

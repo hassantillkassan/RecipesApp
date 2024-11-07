@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
     android:orientation="vertical"
-    tools:context=".ui.RecipeFragment">
+    tools:context=".ui.recipes.detail.RecipeFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

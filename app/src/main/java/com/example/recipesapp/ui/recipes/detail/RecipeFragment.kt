@@ -1,4 +1,4 @@
-package com.example.recipesapp.ui
+package com.example.recipesapp.ui.recipes.detail
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.FragmentRecipeBinding
 import com.example.recipesapp.model.Recipe
+import com.example.recipesapp.ui.IngredientsAdapter
+import com.example.recipesapp.ui.MethodAdapter
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import java.io.InputStream
 
