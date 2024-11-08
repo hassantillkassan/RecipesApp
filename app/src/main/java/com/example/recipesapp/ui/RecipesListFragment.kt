@@ -1,4 +1,4 @@
-package com.example.recipesapp
+package com.example.recipesapp.ui
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.recipesapp.R
+import com.example.recipesapp.data.STUB
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
 import java.io.InputStream
 

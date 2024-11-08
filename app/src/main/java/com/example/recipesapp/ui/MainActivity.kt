@@ -1,4 +1,4 @@
-package com.example.recipesapp
+package com.example.recipesapp.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -9,7 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ActivityMainBinding
+import com.example.recipesapp.model.Recipe
+import com.example.recipesapp.ui.recipes.detail.RecipeFragment
 
 class MainActivity : AppCompatActivity(), OnNavigationListener {
 

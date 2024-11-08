@@ -1,11 +1,13 @@
-package com.example.recipesapp
+package com.example.recipesapp.ui
 
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ItemCategoryBinding
+import com.example.recipesapp.model.Category
 
 import java.io.InputStream
 

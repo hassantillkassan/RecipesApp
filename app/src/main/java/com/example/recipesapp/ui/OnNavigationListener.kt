@@ -1,6 +1,7 @@
-package com.example.recipesapp
+package com.example.recipesapp.ui
 
 import android.os.Bundle
+import com.example.recipesapp.model.Recipe
 
 interface OnNavigationListener {
     fun navigateToCategories()
