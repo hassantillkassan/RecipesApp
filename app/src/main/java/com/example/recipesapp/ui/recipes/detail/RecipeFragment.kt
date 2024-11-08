@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.FragmentRecipeBinding
@@ -31,6 +32,8 @@ class RecipeFragment : Fragment() {
     private var recipe: Recipe? = null
 
     private var isFavorite: Boolean = false
+
+    private val viewModel: RecipeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +60,10 @@ class RecipeFragment : Fragment() {
         initRecycler()
         initUI()
         checkIfFavorite()
+
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            Log.i("!!!", "isFavorite: ${state.isFavorite}")
+        }
     }
 
     private fun checkIfFavorite() {
