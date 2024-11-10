@@ -1,8 +1,6 @@
 package com.example.recipesapp.ui.recipes.detail
 
-import android.content.Context
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -31,19 +29,17 @@ class RecipeFragment : Fragment() {
 
     private var recipe: Recipe? = null
 
-    private var isFavorite: Boolean = false
-
     private val viewModel: RecipeViewModel by viewModels()
+
+    private var recipeId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        recipe = if (Build.VERSION.SDK_INT >= 33) {
-            arguments?.getParcelable(ARG_RECIPE_ID, Recipe::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            arguments?.getParcelable(ARG_RECIPE_ID)
-        } ?: throw IllegalArgumentException("Recipe must be provided in arguments")
+        recipeId = arguments?.getInt(ARG_RECIPE_ID)
+            ?: throw IllegalArgumentException("Recipe ID must be provided in arguments")
+
+        viewModel.loadRecipe(recipeId)
     }
 
     override fun onCreateView(
@@ -59,17 +55,10 @@ class RecipeFragment : Fragment() {
 
         initRecycler()
         initUI()
-        checkIfFavorite()
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             Log.i("!!!", "isFavorite: ${state.isFavorite}")
         }
-    }
-
-    private fun checkIfFavorite() {
-        val favorites = getFavorites()
-        isFavorite = favorites.contains(recipe?.id.toString())
-        updateFavoriteIcon()
     }
 
     private fun initRecycler() {
@@ -124,61 +113,39 @@ class RecipeFragment : Fragment() {
     }
 
     private fun initUI() {
-        recipe?.let { recipe ->
-            recipeBinding.tvRecipe.text = recipe.title
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            state.recipe?.let { recipe ->
+                recipeBinding.tvRecipe.text = recipe.title
 
-            try {
-                val inputStream: InputStream = requireContext().assets.open(recipe.imageUrl)
-                val drawable = Drawable.createFromStream(inputStream, null)
-                recipeBinding.ivRecipeImage.setImageDrawable(drawable)
-                inputStream.close()
-            } catch (e: Exception) {
-                Log.e("RecipeFragment", "Image not found ${recipe.imageUrl}", e)
-                recipeBinding.ivRecipeImage.setImageResource(R.drawable.burger)
-            }
+                try {
+                    val inputStream: InputStream = requireContext().assets.open(recipe.imageUrl)
+                    val drawable = Drawable.createFromStream(inputStream, null)
+                    recipeBinding.ivRecipeImage.setImageDrawable(drawable)
+                    inputStream.close()
+                } catch (e: Exception) {
+                    Log.e("RecipeFragment", "Image not found ${recipe.imageUrl}", e)
+                    recipeBinding.ivRecipeImage.setImageResource(R.drawable.burger)
+                }
 
-            recipeBinding.ivRecipeImage.contentDescription = getString(
-                R.string.text_recipe_image_description,
-                recipe.title
-            )
+                recipeBinding.ivRecipeImage.contentDescription = getString(
+                    R.string.text_recipe_image_description,
+                    recipe.title
+                )
 
-            updateFavoriteIcon()
-            recipeBinding.btnFavorite.setOnClickListener {
-                val favorites = getFavorites()
-                recipe.id.toString().let { recipeId ->
-                    if (isFavorite) {
-                        favorites.remove(recipeId)
-                    } else {
-                        favorites.add(recipeId)
-                    }
-                    saveFavorites(favorites)
-                    isFavorite = !isFavorite
-                    updateFavoriteIcon()
+                updateFavoriteIcon(state.isFavorite)
+
+                recipeBinding.btnFavorite.setOnClickListener {
+                    viewModel.onFavoritesClicked(recipeId)
                 }
             }
         }
     }
 
-    private fun updateFavoriteIcon() {
+    private fun updateFavoriteIcon(isFavorite: Boolean) {
         if (isFavorite)
             recipeBinding.btnFavorite.setImageResource(R.drawable.ic_heart_filled)
         else
             recipeBinding.btnFavorite.setImageResource(R.drawable.ic_heart_empty)
-    }
-
-    private fun saveFavorites(favorites: Set<String>) {
-        val sharedPrefs =
-            requireContext().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
-        sharedPrefs.edit().putStringSet(FAVORITES_KEY, favorites).apply()
-    }
-
-    private fun getFavorites(): MutableSet<String> {
-        val sharedPrefs =
-            requireContext().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
-        val favorites =
-            sharedPrefs.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
-
-        return HashSet(favorites)
     }
 
     override fun onDestroy() {
@@ -188,7 +155,5 @@ class RecipeFragment : Fragment() {
 
     companion object {
         const val ARG_RECIPE_ID = "recipe_id"
-        private const val SHARED_PREFS_NAME = "favorite_recipes_prefs"
-        private const val FAVORITES_KEY = "favorites_recipes"
     }
 }

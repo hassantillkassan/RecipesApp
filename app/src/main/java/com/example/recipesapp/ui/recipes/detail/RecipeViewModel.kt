@@ -1,12 +1,15 @@
 package com.example.recipesapp.ui.recipes.detail
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.example.recipesapp.data.STUB
 import com.example.recipesapp.model.Recipe
 
-class RecipeViewModel : ViewModel() {
+class RecipeViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _state = MutableLiveData<RecipeState>()
     val state: LiveData<RecipeState>
@@ -20,7 +23,59 @@ class RecipeViewModel : ViewModel() {
 
     init {
         Log.i("RecipeViewModel", "ViewModel initialization")
-        _state.value = RecipeState(isFavorite = false)
+        _state.value = _state.value?.copy(isFavorite = false)
+    }
+
+    fun loadRecipe(recipeId: Int) {
+        // TODO: load from network
+
+        val recipe = STUB.getRecipeById(recipeId)
+        val currentPortionCount = _state.value?.portionCount ?: 1
+        val favorites = getFavorites()
+
+        _state.value = _state.value?.copy(
+            recipe = recipe,
+            portionCount = currentPortionCount,
+            isFavorite = favorites.contains(recipeId.toString()),
+        ) ?: RecipeState(
+            recipe = recipe,
+            portionCount = currentPortionCount,
+            isFavorite = favorites.contains(recipeId.toString()),
+        )
+    }
+
+    private fun getFavorites(): MutableSet<String> {
+        val sharedPrefs =
+            getApplication<Application>().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+        val favorites =
+            sharedPrefs.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
+
+        return HashSet(favorites)
+    }
+
+    private fun saveFavorites(favorites: Set<String>) {
+        val sharedPrefs =
+            getApplication<Application>().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPrefs.edit().putStringSet(FAVORITES_KEY, favorites).apply()
+    }
+
+    fun onFavoritesClicked(recipeId: Int) {
+        val favorites = getFavorites().toMutableSet()
+        val isCurrentlyFavorite = state.value?.isFavorite ?: false
+
+        if (isCurrentlyFavorite) {
+            favorites.remove(recipeId.toString())
+        } else {
+            favorites.add(recipeId.toString())
+        }
+
+        saveFavorites(favorites)
+        _state.value = _state.value?.copy(isFavorite = !isCurrentlyFavorite)
+    }
+
+    companion object {
+        private const val SHARED_PREFS_NAME = "favorite_recipes_prefs"
+        private const val FAVORITES_KEY = "favorites_recipes"
     }
 
 }
