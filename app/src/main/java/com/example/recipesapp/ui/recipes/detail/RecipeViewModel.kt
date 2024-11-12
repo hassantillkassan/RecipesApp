@@ -2,7 +2,6 @@ package com.example.recipesapp.ui.recipes.detail
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,25 +20,17 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         val isFavorite: Boolean = false,
     )
 
-    init {
-        Log.i("RecipeViewModel", "ViewModel initialization")
-        _state.value = _state.value?.copy(isFavorite = false)
-    }
-
     fun loadRecipe(recipeId: Int) {
         // TODO: load from network
 
         val recipe = STUB.getRecipeById(recipeId)
-        val currentPortionCount = _state.value?.portionCount ?: 1
         val favorites = getFavorites()
 
         _state.value = _state.value?.copy(
             recipe = recipe,
-            portionCount = currentPortionCount,
             isFavorite = favorites.contains(recipeId.toString()),
         ) ?: RecipeState(
             recipe = recipe,
-            portionCount = currentPortionCount,
             isFavorite = favorites.contains(recipeId.toString()),
         )
     }
@@ -59,7 +50,8 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         sharedPrefs.edit().putStringSet(FAVORITES_KEY, favorites).apply()
     }
 
-    fun onFavoritesClicked(recipeId: Int) {
+    fun onFavoritesClicked() {
+        val recipeId = _state.value?.recipe?.id ?: return
         val favorites = getFavorites().toMutableSet()
         val isCurrentlyFavorite = state.value?.isFavorite ?: false
 
