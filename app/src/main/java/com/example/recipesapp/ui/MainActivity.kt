@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
             setReorderingAllowed(true)
             replace<RecipeFragment>(
                 R.id.mainContainer,
-                args = bundleOf(RecipeFragment.ARG_RECIPE_ID to recipe)
+                args = bundleOf(RecipeFragment.ARG_RECIPE_ID to recipe.id)
                 )
             addToBackStack(null)
         }

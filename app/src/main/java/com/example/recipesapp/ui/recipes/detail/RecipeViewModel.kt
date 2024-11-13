@@ -10,7 +10,7 @@ import com.example.recipesapp.model.Recipe
 
 class RecipeViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _state = MutableLiveData<RecipeState>()
+    private val _state = MutableLiveData<RecipeState>().apply { value = RecipeState() }
     val state: LiveData<RecipeState>
         get() = _state
 
@@ -27,9 +27,6 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         val favorites = getFavorites()
 
         _state.value = _state.value?.copy(
-            recipe = recipe,
-            isFavorite = favorites.contains(recipeId.toString()),
-        ) ?: RecipeState(
             recipe = recipe,
             isFavorite = favorites.contains(recipeId.toString()),
         )
