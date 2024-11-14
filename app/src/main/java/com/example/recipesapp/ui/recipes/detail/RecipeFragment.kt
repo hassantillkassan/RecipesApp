@@ -13,7 +13,6 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.FragmentRecipeBinding
-import com.example.recipesapp.model.Recipe
 import com.example.recipesapp.ui.IngredientsAdapter
 import com.example.recipesapp.ui.MethodAdapter
 import com.google.android.material.divider.MaterialDividerItemDecoration
@@ -56,9 +55,12 @@ class RecipeFragment : Fragment() {
         }
 
         initUI()
+        initRecycler()
     }
 
-    private fun initRecycler(recipe: Recipe) {
+    private fun initRecycler() {
+        val recipe = viewModel.state.value?.recipe ?: return
+
         val dividerColor = ContextCompat.getColor(requireContext(), R.color.dividerColor)
         val divider = MaterialDividerItemDecoration(
             requireContext(),
@@ -72,14 +74,18 @@ class RecipeFragment : Fragment() {
         }
 
         val ingredientsAdapter = IngredientsAdapter(recipe.ingredients)
-        recipeBinding.rvIngredients.adapter = ingredientsAdapter
-        recipeBinding.rvIngredients.layoutManager = LinearLayoutManager(context)
-        recipeBinding.rvIngredients.addItemDecoration(divider)
+        recipeBinding.rvIngredients.apply {
+            adapter = ingredientsAdapter
+            layoutManager = LinearLayoutManager(context)
+            addItemDecoration(divider)
+        }
 
         val methodAdapter = MethodAdapter(recipe.method)
-        recipeBinding.rvMethod.adapter = methodAdapter
-        recipeBinding.rvMethod.layoutManager = LinearLayoutManager(context)
-        recipeBinding.rvMethod.addItemDecoration(divider)
+        recipeBinding.rvMethod.apply {
+            adapter = methodAdapter
+            layoutManager = LinearLayoutManager(context)
+            addItemDecoration(divider)
+        }
 
         recipeBinding.seekBarPortions.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
@@ -128,7 +134,6 @@ class RecipeFragment : Fragment() {
                 )
 
                 updateFavoriteIcon(state.isFavorite)
-                initRecycler(recipe)
             }
         }
     }
@@ -140,8 +145,8 @@ class RecipeFragment : Fragment() {
             recipeBinding.btnFavorite.setImageResource(R.drawable.ic_heart_empty)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _recipeBinding = null
     }
 
