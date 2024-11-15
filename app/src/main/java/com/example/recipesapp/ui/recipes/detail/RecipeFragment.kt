@@ -1,8 +1,6 @@
 package com.example.recipesapp.ui.recipes.detail
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +14,6 @@ import com.example.recipesapp.databinding.FragmentRecipeBinding
 import com.example.recipesapp.ui.IngredientsAdapter
 import com.example.recipesapp.ui.MethodAdapter
 import com.google.android.material.divider.MaterialDividerItemDecoration
-import java.io.InputStream
 
 
 class RecipeFragment : Fragment() {
@@ -59,7 +56,7 @@ class RecipeFragment : Fragment() {
     }
 
     private fun initRecycler() {
-        val recipe = viewModel.state.value?.recipe ?: return
+        val recipe = viewModel.state.value?.recipe ?: return //TODO: RA-25 refactoring: state reference
 
         val dividerColor = ContextCompat.getColor(requireContext(), R.color.dividerColor)
         val divider = MaterialDividerItemDecoration(
@@ -118,13 +115,10 @@ class RecipeFragment : Fragment() {
             state.recipe?.let { recipe ->
                 recipeBinding.tvRecipe.text = recipe.title
 
-                try {
-                    val inputStream: InputStream = requireContext().assets.open(recipe.imageUrl)
-                    val drawable = Drawable.createFromStream(inputStream, null)
+                val drawable = state.recipeImage
+                if (drawable != null) {
                     recipeBinding.ivRecipeImage.setImageDrawable(drawable)
-                    inputStream.close()
-                } catch (e: Exception) {
-                    Log.e("RecipeFragment", "Image not found ${recipe.imageUrl}", e)
+                } else {
                     recipeBinding.ivRecipeImage.setImageResource(R.drawable.burger)
                 }
 
