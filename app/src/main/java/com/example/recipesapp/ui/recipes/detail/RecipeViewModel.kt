@@ -2,11 +2,14 @@ package com.example.recipesapp.ui.recipes.detail
 
 import android.app.Application
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.recipesapp.data.STUB
 import com.example.recipesapp.model.Recipe
+import java.io.InputStream
 
 class RecipeViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -18,6 +21,7 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         val recipe: Recipe? = null,
         val portionCount: Int = 1,
         val isFavorite: Boolean = false,
+        val recipeImage: Drawable? = null,
     )
 
     fun loadRecipe(recipeId: Int) {
@@ -30,6 +34,18 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
             recipe = recipe,
             isFavorite = favorites.contains(recipeId.toString()),
         )
+
+        recipe?.let {
+            try {
+                val inputStream: InputStream = getApplication<Application>().assets.open(it.imageUrl)
+                val drawable = Drawable.createFromStream(inputStream, null)
+                inputStream.close()
+                _state.value = _state.value?.copy(recipeImage = drawable)
+            } catch (e: Exception) {
+                Log.e("RecipeViewModel", "Image not found ${recipe.imageUrl}", e)
+                null
+            }
+        }
     }
 
     private fun getFavorites(): MutableSet<String> {
