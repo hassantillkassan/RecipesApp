@@ -10,7 +10,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 class IngredientsAdapter(
-    private val dataSet: List<Ingredient>
+    private var dataSet: List<Ingredient>
 ) :
     RecyclerView.Adapter<IngredientsAdapter.ViewHolder>() {
 
@@ -50,6 +50,10 @@ class IngredientsAdapter(
                 ingredient.unitOfMeasure
             )
         }
+    }
+
+    fun updateData(ingredients: List<Ingredient>) {
+        this.dataSet = ingredients
     }
 
     override fun getItemCount() = dataSet.size

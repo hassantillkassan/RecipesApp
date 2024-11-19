@@ -27,6 +27,11 @@ class RecipeFragment : Fragment() {
 
     private var recipeId: Int = -1
 
+    private lateinit var ingredientsAdapter: IngredientsAdapter
+    private lateinit var methodAdapter: MethodAdapter
+
+    private lateinit var divider: MaterialDividerItemDecoration
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,14 +57,11 @@ class RecipeFragment : Fragment() {
         }
 
         initUI()
-        initRecycler()
     }
 
-    private fun initRecycler() {
-        val recipe = viewModel.state.value?.recipe ?: return //TODO: RA-25 refactoring: state reference
-
+    private fun initUI() {
         val dividerColor = ContextCompat.getColor(requireContext(), R.color.dividerColor)
-        val divider = MaterialDividerItemDecoration(
+        divider = MaterialDividerItemDecoration(
             requireContext(),
             LinearLayoutManager.VERTICAL
         ).apply {
@@ -70,14 +72,15 @@ class RecipeFragment : Fragment() {
             isLastItemDecorated = false
         }
 
-        val ingredientsAdapter = IngredientsAdapter(recipe.ingredients)
+        ingredientsAdapter = IngredientsAdapter(emptyList())
+        methodAdapter = MethodAdapter(emptyList())
+
         recipeBinding.rvIngredients.apply {
             adapter = ingredientsAdapter
             layoutManager = LinearLayoutManager(context)
             addItemDecoration(divider)
         }
 
-        val methodAdapter = MethodAdapter(recipe.method)
         recipeBinding.rvMethod.apply {
             adapter = methodAdapter
             layoutManager = LinearLayoutManager(context)
@@ -94,6 +97,8 @@ class RecipeFragment : Fragment() {
                 recipeBinding.tvPortionQuantity.text =
                     getString(R.string.text_portions, progress)
 
+                viewModel.updatePortionCount(progress)
+
                 ingredientsAdapter.updateIngredients(progress)
             }
 
@@ -104,13 +109,6 @@ class RecipeFragment : Fragment() {
             }
         })
 
-        val initialPortions = recipeBinding.seekBarPortions.progress
-        recipeBinding.tvPortionQuantity.text =
-            getString(R.string.text_portions, initialPortions)
-        ingredientsAdapter.updateIngredients(initialPortions)
-    }
-
-    private fun initUI() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             state.recipe?.let { recipe ->
                 recipeBinding.tvRecipe.text = recipe.title
@@ -128,6 +126,13 @@ class RecipeFragment : Fragment() {
                 )
 
                 updateFavoriteIcon(state.isFavorite)
+
+                ingredientsAdapter.updateData(recipe.ingredients)
+                methodAdapter.updateData(recipe.method)
+
+                recipeBinding.tvPortionQuantity.text =
+                    getString(R.string.text_portions, state.portionCount)
+                ingredientsAdapter.updateIngredients(state.portionCount)
             }
         }
     }

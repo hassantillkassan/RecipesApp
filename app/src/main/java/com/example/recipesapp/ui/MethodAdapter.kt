@@ -7,7 +7,7 @@ import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ItemMethodBinding
 
 class MethodAdapter(
-    private val dataSet: List<String>
+    private var dataSet: List<String>
 ) : RecyclerView.Adapter<MethodAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: ItemMethodBinding) :
@@ -32,6 +32,10 @@ class MethodAdapter(
                 step
             )
         }
+    }
+
+    fun updateData(method: List<String>) {
+        this.dataSet = method
     }
 
     override fun getItemCount() = dataSet.size

@@ -78,6 +78,10 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         _state.value = _state.value?.copy(isFavorite = !isCurrentlyFavorite)
     }
 
+    fun updatePortionCount(portionCount: Int) {
+        _state.value = _state.value?.copy(portionCount = portionCount)
+    }
+
     companion object {
         private const val SHARED_PREFS_NAME = "favorite_recipes_prefs"
         private const val FAVORITES_KEY = "favorites_recipes"
