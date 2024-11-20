@@ -12,7 +12,7 @@ import com.example.recipesapp.model.Category
 import java.io.InputStream
 
 class CategoriesListAdapter(
-    private val dataSet: List<Category>,
+    private var dataSet: List<Category>,
     private val onItemClick: (Int) -> Unit
 ) :
     RecyclerView.Adapter<CategoriesListAdapter.ViewHolder>() {
@@ -54,6 +54,10 @@ class CategoriesListAdapter(
         binding.root.setOnClickListener {
             onItemClick(category.id)
         }
+    }
+
+    fun updateData(categories: List<Category>)  {
+        this.dataSet = categories
     }
 
     override fun getItemCount() = dataSet.size

@@ -12,7 +12,10 @@ import androidx.fragment.app.replace
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ActivityMainBinding
 import com.example.recipesapp.model.Recipe
+import com.example.recipesapp.ui.categories.CategoriesListFragment
 import com.example.recipesapp.ui.recipes.detail.RecipeFragment
+import com.example.recipesapp.ui.recipes.favorites.FavoritesFragment
+import com.example.recipesapp.ui.recipes.list.RecipesListFragment
 
 class MainActivity : AppCompatActivity(), OnNavigationListener {
 
