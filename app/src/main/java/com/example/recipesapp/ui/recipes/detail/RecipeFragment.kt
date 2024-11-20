@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,10 +28,24 @@ class RecipeFragment : Fragment() {
 
     private var recipeId: Int = -1
 
-    private lateinit var ingredientsAdapter: IngredientsAdapter
-    private lateinit var methodAdapter: MethodAdapter
+    private var ingredientsAdapter = IngredientsAdapter(emptyList())
+    private var methodAdapter = MethodAdapter(emptyList())
 
-    private lateinit var divider: MaterialDividerItemDecoration
+    class PortionSeekBarListener(
+        private val onChangeIngredients: (Int) -> Unit
+    ) : OnSeekBarChangeListener {
+
+        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            onChangeIngredients(progress)
+        }
+
+        override fun onStartTrackingTouch(seekBar: SeekBar?) {
+        }
+
+        override fun onStopTrackingTouch(seekBar: SeekBar?) {
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +76,7 @@ class RecipeFragment : Fragment() {
 
     private fun initUI() {
         val dividerColor = ContextCompat.getColor(requireContext(), R.color.dividerColor)
-        divider = MaterialDividerItemDecoration(
+        val divider = MaterialDividerItemDecoration(
             requireContext(),
             LinearLayoutManager.VERTICAL
         ).apply {
@@ -71,9 +86,6 @@ class RecipeFragment : Fragment() {
             dividerInsetEnd = resources.getDimensionPixelSize(R.dimen.main_space_12)
             isLastItemDecorated = false
         }
-
-        ingredientsAdapter = IngredientsAdapter(emptyList())
-        methodAdapter = MethodAdapter(emptyList())
 
         recipeBinding.rvIngredients.apply {
             adapter = ingredientsAdapter
@@ -87,27 +99,11 @@ class RecipeFragment : Fragment() {
             addItemDecoration(divider)
         }
 
-        recipeBinding.seekBarPortions.setOnSeekBarChangeListener(object :
-            SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(
-                seekBar: SeekBar?,
-                progress: Int,
-                fromUser: Boolean
-            ) {
-                recipeBinding.tvPortionQuantity.text =
-                    getString(R.string.text_portions, progress)
-
+        recipeBinding.seekBarPortions.setOnSeekBarChangeListener(
+            PortionSeekBarListener { progress ->
                 viewModel.updatePortionCount(progress)
-
-                ingredientsAdapter.updateIngredients(progress)
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-            }
-        })
+        )
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             state.recipe?.let { recipe ->
