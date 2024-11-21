@@ -1,4 +1,4 @@
-package com.example.recipesapp.ui
+package com.example.recipesapp.ui.categories
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
 import com.example.recipesapp.data.STUB
 import com.example.recipesapp.databinding.FragmentListCategoriesBinding
+import com.example.recipesapp.ui.CategoriesListAdapter
+import com.example.recipesapp.ui.OnNavigationListener
 
 class CategoriesListFragment : Fragment() {
 
@@ -23,6 +26,9 @@ class CategoriesListFragment : Fragment() {
             )
     }
 
+    private val viewModel: CategoriesListViewModel by viewModels()
+    private var categoriesAdapter: CategoriesListAdapter? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,16 +39,21 @@ class CategoriesListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initRecycler()
+
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            categoriesAdapter?.updateData(state.categories)
+        }
+
+        viewModel.loadCategories()
     }
 
     private fun initRecycler() {
-        val categories = STUB.getCategories()
-
-        val adapter = CategoriesListAdapter(categories) { categoryId ->
+        categoriesAdapter = CategoriesListAdapter(emptyList()) { categoryId ->
             openRecipesByCategoryId(categoryId)
         }
-        categoriesBinding.rvCategories.adapter = adapter
+        categoriesBinding.rvCategories.adapter = categoriesAdapter
     }
 
     private fun openRecipesByCategoryId(categoryId: Int) {

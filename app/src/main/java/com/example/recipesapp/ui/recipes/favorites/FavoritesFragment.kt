@@ -1,16 +1,18 @@
-package com.example.recipesapp.ui
+package com.example.recipesapp.ui.recipes.favorites
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
 import com.example.recipesapp.data.STUB
 import com.example.recipesapp.databinding.FragmentFavoritesBinding
+import com.example.recipesapp.ui.OnNavigationListener
+import com.example.recipesapp.ui.RecipesListAdapter
 
 class FavoritesFragment : Fragment() {
 
@@ -19,7 +21,8 @@ class FavoritesFragment : Fragment() {
         get() = _favoritesBinding
             ?: throw IllegalStateException("Binding for FragmentFavoritesBinding must not be null")
 
-    private lateinit var recipesAdapter: RecipesListAdapter
+    private var recipesAdapter: RecipesListAdapter? = null
+    private val viewModel: FavoritesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +36,20 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initializeRecyclerView()
-        loadFavoritesRecipes()
+
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            recipesAdapter?.updateData(state.recipes)
+
+            if (state.isEmpty) {
+                favoritesBinding.rvFavorites.visibility = View.GONE
+                favoritesBinding.tvEmptyFavorites.visibility = View.VISIBLE
+            } else {
+                favoritesBinding.rvFavorites.visibility = View.VISIBLE
+                favoritesBinding.tvEmptyFavorites.visibility = View.GONE
+            }
+        }
+
+        viewModel.loadFavorites()
     }
 
     private fun initializeRecyclerView() {
@@ -45,33 +61,6 @@ class FavoritesFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = recipesAdapter
         }
-    }
-
-    private fun loadFavoritesRecipes() {
-        val favoritesIds = getFavorites()
-
-        if (favoritesIds.isNotEmpty()) {
-            val favoriteRecipes = STUB.getRecipesByIds(favoritesIds)
-            if (favoritesIds.isNotEmpty()) {
-                recipesAdapter = RecipesListAdapter(favoriteRecipes) {recipe ->
-                    openRecipeByRecipeId(recipe.id)
-                }
-                favoritesBinding.rvFavorites.adapter = recipesAdapter
-                favoritesBinding.rvFavorites.visibility = View.VISIBLE
-                favoritesBinding.tvEmptyFavorites.visibility = View.GONE
-            } else {
-                favoritesBinding.rvFavorites.visibility = View.GONE
-                favoritesBinding.tvEmptyFavorites.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    private fun getFavorites(): Set<Int> {
-        val sharedPreferences =
-            requireContext().getSharedPreferences("favorite_recipes_prefs", Context.MODE_PRIVATE)
-        val favoriteIdsStringSet = sharedPreferences.getStringSet("favorites_recipes", emptySet()) ?: emptySet()
-
-        return favoriteIdsStringSet.mapNotNull { it.toIntOrNull() }.toSet()
     }
 
     private fun openRecipeByRecipeId(recipeId: Int) {

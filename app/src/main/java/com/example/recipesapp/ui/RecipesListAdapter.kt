@@ -11,7 +11,7 @@ import com.example.recipesapp.model.Recipe
 import java.io.InputStream
 
 class RecipesListAdapter(
-    private val dataSet: List<Recipe>,
+    private var dataSet: List<Recipe>,
     private val onItemClick: (Recipe) -> Unit
 ) :
     RecyclerView.Adapter<RecipesListAdapter.ViewHolder>() {
@@ -52,6 +52,10 @@ class RecipesListAdapter(
                 onItemClick(recipe)
             }
         }
+    }
+
+    fun updateData(recipes: List<Recipe>) {
+        this.dataSet = recipes
     }
 
     override fun getItemCount() = dataSet.size

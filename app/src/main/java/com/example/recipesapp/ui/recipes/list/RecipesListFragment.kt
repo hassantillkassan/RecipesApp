@@ -1,17 +1,17 @@
-package com.example.recipesapp.ui
+package com.example.recipesapp.ui.recipes.list
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
-import com.example.recipesapp.data.STUB
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
-import java.io.InputStream
+import com.example.recipesapp.ui.categories.CategoriesListFragment
+import com.example.recipesapp.ui.OnNavigationListener
+import com.example.recipesapp.ui.RecipesListAdapter
 
 class RecipesListFragment : Fragment() {
 
@@ -26,6 +26,10 @@ class RecipesListFragment : Fragment() {
                 "${requireActivity()::class.qualifiedName} must implement OnNavigationListener"
             )
     }
+
+    private val viewModel: RecipesListViewModel by viewModels()
+
+    private var recipesAdapter: RecipesListAdapter? = null
 
     private var categoryId: Int = 0
     private var categoryName: String = ""
@@ -48,35 +52,31 @@ class RecipesListFragment : Fragment() {
             categoryImageUrl = bundle.getString(CategoriesListFragment.ARG_CATEGORY_IMAGE_URL) ?: ""
         }
 
-        recipesBinding.tvCategoryName.text = categoryName
+        viewModel.loadRecipe(categoryId, categoryName, categoryImageUrl)
 
-        categoryImageUrl.let { imageUrl ->
-            try {
-                val inputStream: InputStream? = context?.assets?.open(imageUrl)
-                val drawable = Drawable.createFromStream(inputStream, null)
-                recipesBinding.ivCategoryCoverImage.setImageDrawable(drawable)
-                inputStream?.close()
-            } catch (e: Exception) {
-                Log.e("RecipesListFragment", "Image not found $imageUrl", e)
-            }
-        }
-        recipesBinding.ivCategoryCoverImage.contentDescription = getString(
-            R.string.text_category_image_description,
-            categoryName
-        )
-
-        initRecycler()
-    }
-
-    private fun initRecycler() {
-        val recipes = STUB.getRecipesByCategoryId(categoryId)
-
-        val adapter = RecipesListAdapter(recipes) { recipe ->
+        recipesAdapter = RecipesListAdapter(emptyList()) { recipe ->
             navigationListener.navigateToRecipe(recipe)
         }
 
-        recipesBinding.rvRecipes.adapter = adapter
-        recipesBinding.rvRecipes.layoutManager = LinearLayoutManager(context)
+        with(recipesBinding.rvRecipes) {
+            adapter = recipesAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
+
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            recipesBinding.tvCategoryName.text = state.categoryName
+            state.categoryImage?.let { drawable ->
+                recipesBinding.ivCategoryCoverImage.setImageDrawable(drawable)
+            }
+
+            recipesBinding.ivCategoryCoverImage.contentDescription = getString(
+                R.string.text_category_image_description,
+                categoryName
+            )
+
+            recipesAdapter?.updateData(state.recipes)
+        }
+
     }
 
     override fun onDestroyView() {
