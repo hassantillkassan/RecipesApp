@@ -11,13 +11,15 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mainContainer"
-        android:name="com.example.recipesapp.ui.categories.CategoriesListFragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:defaultNavHost="true"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/nav_graph"
         tools:layout="@layout/fragment_list_categories">
 
     </androidx.fragment.app.FragmentContainerView>

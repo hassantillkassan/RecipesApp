@@ -1,5 +1,6 @@
 package com.example.recipesapp.ui
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -34,8 +35,10 @@ class MethodAdapter(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(method: List<String>) {
         this.dataSet = method
+        notifyDataSetChanged()
     }
 
     override fun getItemCount() = dataSet.size

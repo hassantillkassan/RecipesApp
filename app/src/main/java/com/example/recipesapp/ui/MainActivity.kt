@@ -2,20 +2,14 @@ package com.example.recipesapp.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ActivityMainBinding
 import com.example.recipesapp.model.Recipe
-import com.example.recipesapp.ui.categories.CategoriesListFragment
 import com.example.recipesapp.ui.recipes.detail.RecipeFragment
-import com.example.recipesapp.ui.recipes.favorites.FavoritesFragment
-import com.example.recipesapp.ui.recipes.list.RecipesListFragment
 
 class MainActivity : AppCompatActivity(), OnNavigationListener {
 
@@ -24,22 +18,21 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
         get() = _binding
             ?: throw IllegalStateException("Binding for ActivityMainBinding must not be null")
 
+    private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.mainContainer) as NavHostFragment
+        navController = navHostFragment.navController
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
-        }
-
-        if (savedInstanceState == null) {
-            supportFragmentManager.commit {
-                setReorderingAllowed(true)
-                add<CategoriesListFragment>(R.id.mainContainer)
-            }
         }
 
         binding.buttonCategory.setOnClickListener {
@@ -52,45 +45,34 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
     }
 
     override fun navigateToCategories() {
-        if (supportFragmentManager.findFragmentById(R.id.mainContainer) !is CategoriesListFragment)
-            navigateToFragment<CategoriesListFragment>()
+        if (navController.currentDestination?.id != R.id.categoriesListFragment) {
+            navController.navigate(R.id.categoriesListFragment)
+        }
     }
 
     override fun navigateToFavorites() {
-        if (supportFragmentManager.findFragmentById(R.id.mainContainer) !is FavoritesFragment)
-            navigateToFragment<FavoritesFragment>()
+        if (navController.currentDestination?.id != R.id.favoritesFragment) {
+            navController.navigate(R.id.favoritesFragment)
+        }
     }
 
     override fun navigateToRecipesList(bundle: Bundle) {
-        val recipesListFragment = RecipesListFragment.newInstance(bundle)
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace(R.id.mainContainer, recipesListFragment)
-            addToBackStack(null)
-        }
+        navController.navigate(R.id.recipesListFragment, bundle)
     }
 
     override fun navigateToRecipe(recipe: Recipe) {
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace<RecipeFragment>(
-                R.id.mainContainer,
-                args = bundleOf(RecipeFragment.ARG_RECIPE_ID to recipe.id)
-                )
-            addToBackStack(null)
+        val bundle = Bundle().apply {
+            putInt(RecipeFragment.ARG_RECIPE_ID, recipe.id)
         }
+        navController.navigate(R.id.recipeFragment, bundle)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    private inline fun <reified T : Fragment> navigateToFragment() {
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace<T>(binding.mainContainer.id)
-            addToBackStack(null)
-        }
     }
 }
