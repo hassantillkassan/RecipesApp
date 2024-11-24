@@ -6,6 +6,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navOptions
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ActivityMainBinding
 import com.example.recipesapp.model.Recipe
@@ -46,25 +47,37 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
 
     override fun navigateToCategories() {
         if (navController.currentDestination?.id != R.id.categoriesListFragment) {
-            navController.navigate(R.id.categoriesListFragment)
+            navController.navigate(
+                R.id.action_global_categoriesListFragment,
+                null,
+                navOptions {
+                    launchSingleTop = true
+                }
+            )
         }
     }
 
     override fun navigateToFavorites() {
         if (navController.currentDestination?.id != R.id.favoritesFragment) {
-            navController.navigate(R.id.favoritesFragment)
+            navController.navigate(
+                R.id.action_global_favoritesFragment,
+                null,
+                navOptions {
+                    launchSingleTop = true
+                }
+            )
         }
     }
 
     override fun navigateToRecipesList(bundle: Bundle) {
-        navController.navigate(R.id.recipesListFragment, bundle)
+        navController.navigate(R.id.action_categoriesListFragment_to_recipesListFragment, bundle)
     }
 
     override fun navigateToRecipe(recipe: Recipe) {
         val bundle = Bundle().apply {
             putInt(RecipeFragment.ARG_RECIPE_ID, recipe.id)
         }
-        navController.navigate(R.id.recipeFragment, bundle)
+        navController.navigate(R.id.action_global_recipeFragment, bundle)
     }
 
     override fun onSupportNavigateUp(): Boolean {
