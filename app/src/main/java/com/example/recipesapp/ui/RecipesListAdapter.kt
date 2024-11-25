@@ -1,5 +1,6 @@
 package com.example.recipesapp.ui
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
@@ -54,8 +55,10 @@ class RecipesListAdapter(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(recipes: List<Recipe>) {
         this.dataSet = recipes
+        notifyDataSetChanged()
     }
 
     override fun getItemCount() = dataSet.size
