@@ -9,6 +9,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.FragmentRecipeBinding
@@ -26,7 +27,7 @@ class RecipeFragment : Fragment() {
 
     private val viewModel: RecipeViewModel by viewModels()
 
-    private var recipeId: Int = -1
+    private val args: RecipeFragmentArgs by navArgs()
 
     private var ingredientsAdapter = IngredientsAdapter(emptyList())
     private var methodAdapter = MethodAdapter(emptyList())
@@ -50,10 +51,7 @@ class RecipeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        recipeId = arguments?.getInt(ARG_RECIPE_ID)
-            ?: throw IllegalArgumentException("Recipe ID must be provided in arguments")
-
-        viewModel.loadRecipe(recipeId)
+        viewModel.loadRecipe(args.recipeId)
     }
 
     override fun onCreateView(

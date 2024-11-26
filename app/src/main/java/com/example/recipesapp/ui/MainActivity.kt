@@ -1,16 +1,17 @@
 package com.example.recipesapp.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.navOptions
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ActivityMainBinding
 import com.example.recipesapp.model.Recipe
-import com.example.recipesapp.ui.recipes.detail.RecipeFragment
+import com.example.recipesapp.ui.recipes.favorites.FavoritesFragmentDirections
+import com.example.recipesapp.ui.recipes.list.RecipesListFragmentDirections
 
 class MainActivity : AppCompatActivity(), OnNavigationListener {
 
@@ -50,9 +51,6 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
             navController.navigate(
                 R.id.action_global_categoriesListFragment,
                 null,
-                navOptions {
-                    launchSingleTop = true
-                }
             )
         }
     }
@@ -62,9 +60,6 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
             navController.navigate(
                 R.id.action_global_favoritesFragment,
                 null,
-                navOptions {
-                    launchSingleTop = true
-                }
             )
         }
     }
@@ -74,10 +69,20 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
     }
 
     override fun navigateToRecipe(recipe: Recipe) {
-        val bundle = Bundle().apply {
-            putInt(RecipeFragment.ARG_RECIPE_ID, recipe.id)
+        val direction = when (navController.currentDestination?.id) {
+            R.id.favoritesFragment -> FavoritesFragmentDirections.actionFavoritesFragmentToRecipeFragment(recipe.id)
+            R.id.recipesListFragment -> RecipesListFragmentDirections.actionRecipesListFragmentToRecipeFragment(recipe.id)
+            else -> null
         }
-        navController.navigate(R.id.action_global_recipeFragment, bundle)
+
+        if (direction != null) {
+            navController.navigate(direction)
+        } else {
+            Log.e(
+                "MainActivity",
+                "No local action to navigate to RecipeFragment from the current location"
+            )
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
