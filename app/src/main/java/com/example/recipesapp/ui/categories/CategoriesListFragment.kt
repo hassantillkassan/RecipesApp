@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.example.recipesapp.data.STUB
 import com.example.recipesapp.databinding.FragmentListCategoriesBinding
@@ -59,19 +58,9 @@ class CategoriesListFragment : Fragment() {
     private fun openRecipesByCategoryId(categoryId: Int) {
         val categories = STUB.getCategories()
         val selectedCategory = categories.find { it.id == categoryId }
+            ?: throw IllegalArgumentException("Category with id $categoryId not found")
 
-        if (selectedCategory != null) {
-            val categoryName = selectedCategory.title
-            val categoryImageUrl = selectedCategory.imageUrl
-
-            val bundle = bundleOf(
-                ARG_CATEGORY_ID to categoryId,
-                ARG_CATEGORY_NAME to categoryName,
-                ARG_CATEGORY_IMAGE_URL to categoryImageUrl
-            )
-
-            navigationListener.navigateToRecipesList(bundle)
-        }
+        navigationListener.navigateToRecipesList(selectedCategory)
     }
 
     override fun onDestroyView() {

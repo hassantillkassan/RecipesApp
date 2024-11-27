@@ -9,7 +9,9 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ActivityMainBinding
+import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
+import com.example.recipesapp.ui.categories.CategoriesListFragmentDirections
 import com.example.recipesapp.ui.recipes.favorites.FavoritesFragmentDirections
 import com.example.recipesapp.ui.recipes.list.RecipesListFragmentDirections
 
@@ -64,8 +66,10 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
         }
     }
 
-    override fun navigateToRecipesList(bundle: Bundle) {
-        navController.navigate(R.id.action_categoriesListFragment_to_recipesListFragment, bundle)
+    override fun navigateToRecipesList(category: Category) {
+        val action = CategoriesListFragmentDirections
+            .actionCategoriesListFragmentToRecipesListFragment(category)
+        navController.navigate(action)
     }
 
     override fun navigateToRecipe(recipe: Recipe) {

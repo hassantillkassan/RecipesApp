@@ -6,10 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
-import com.example.recipesapp.ui.categories.CategoriesListFragment
 import com.example.recipesapp.ui.OnNavigationListener
 import com.example.recipesapp.ui.RecipesListAdapter
 
@@ -31,9 +31,7 @@ class RecipesListFragment : Fragment() {
 
     private var recipesAdapter: RecipesListAdapter? = null
 
-    private var categoryId: Int = 0
-    private var categoryName: String = ""
-    private var categoryImageUrl: String = ""
+    private val args: RecipesListFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,13 +44,8 @@ class RecipesListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        arguments?.let { bundle ->
-            categoryId = bundle.getInt(CategoriesListFragment.ARG_CATEGORY_ID)
-            categoryName = bundle.getString(CategoriesListFragment.ARG_CATEGORY_NAME) ?: ""
-            categoryImageUrl = bundle.getString(CategoriesListFragment.ARG_CATEGORY_IMAGE_URL) ?: ""
-        }
-
-        viewModel.loadRecipe(categoryId, categoryName, categoryImageUrl)
+        val category = args.category
+        viewModel.loadRecipe(category.id, category.title, category.imageUrl)
 
         recipesAdapter = RecipesListAdapter(emptyList()) { recipe ->
             navigationListener.navigateToRecipe(recipe)
@@ -71,7 +64,7 @@ class RecipesListFragment : Fragment() {
 
             recipesBinding.ivCategoryCoverImage.contentDescription = getString(
                 R.string.text_category_image_description,
-                categoryName
+                category.title
             )
 
             recipesAdapter?.updateData(state.recipes)
