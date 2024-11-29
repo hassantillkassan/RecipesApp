@@ -45,7 +45,7 @@ class RecipesListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val category = args.category
-        viewModel.loadRecipe(category.id, category.title, category.imageUrl)
+        viewModel.loadRecipe(category)
 
         recipesAdapter = RecipesListAdapter(emptyList()) { recipe ->
             navigationListener.navigateToRecipe(recipe)

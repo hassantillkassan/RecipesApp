@@ -14,6 +14,12 @@ import com.example.recipesapp.model.Recipe
 import com.example.recipesapp.ui.categories.CategoriesListFragmentDirections
 import com.example.recipesapp.ui.recipes.favorites.FavoritesFragmentDirections
 import com.example.recipesapp.ui.recipes.list.RecipesListFragmentDirections
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 
 class MainActivity : AppCompatActivity(), OnNavigationListener {
 
@@ -28,6 +34,9 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val mainThreadName = Thread.currentThread().name
+        Log.d("MainActivity", "Метод onCreate() выполняется на потоке: $mainThreadName")
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.mainContainer) as NavHostFragment
@@ -46,6 +55,55 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
         binding.buttonFavorites.setOnClickListener {
             navigateToFavorites()
         }
+
+        Thread {
+            val requestThreadName = Thread.currentThread().name
+            Log.d("MainActivity", "Выполняю запрос на потоке: $requestThreadName")
+
+            val url = URL("https://recipes.androidsprint.ru/api/category")
+            val connection = url.openConnection() as HttpURLConnection
+
+            try {
+                connection.requestMethod = "GET"
+                connection.connectTimeout = 10000
+                connection.readTimeout = 10000
+
+                val responseCode = connection.responseCode
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    val stream = connection.inputStream
+                    val reader = BufferedReader(InputStreamReader(stream))
+                    val response = StringBuilder()
+
+                    var line: String?
+                    while (reader.readLine().also { line = it } != null) {
+                        response.append(line)
+                    }
+
+                    reader.close()
+                    stream.close()
+                    connection.disconnect()
+
+                    Log.d("MainActivity", "Ответ от сервера: ${response.toString()}")
+
+                    val gson = Gson()
+                    val listType = object : TypeToken<List<Category>>() {}.type
+                    val categories: List<Category> = gson.fromJson(response.toString(), listType)
+
+                    categories.forEach { category ->
+                        Log.d(
+                            "MainActivity",
+                            "Категория id=${category.id}, title=${category.title}, description=${category.description}, imageUrl=${category.imageUrl}"
+                        )
+                    }
+                } else {
+                    Log.e("MainActivity", "Ошибка при запросе. Ответ: $responseCode")
+                }
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Ошибка при выполнении запроса", e)
+            } finally {
+                connection.disconnect()
+            }
+        }.start()
     }
 
     override fun navigateToCategories() {
@@ -74,8 +132,14 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
 
     override fun navigateToRecipe(recipe: Recipe) {
         val direction = when (navController.currentDestination?.id) {
-            R.id.favoritesFragment -> FavoritesFragmentDirections.actionFavoritesFragmentToRecipeFragment(recipe.id)
-            R.id.recipesListFragment -> RecipesListFragmentDirections.actionRecipesListFragmentToRecipeFragment(recipe.id)
+            R.id.favoritesFragment -> FavoritesFragmentDirections.actionFavoritesFragmentToRecipeFragment(
+                recipe.id
+            )
+
+            R.id.recipesListFragment -> RecipesListFragmentDirections.actionRecipesListFragmentToRecipeFragment(
+                recipe.id
+            )
+
             else -> null
         }
 
