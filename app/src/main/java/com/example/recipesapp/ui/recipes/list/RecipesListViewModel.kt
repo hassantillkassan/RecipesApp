@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.recipesapp.data.STUB
+import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
 import java.io.InputStream
 
@@ -22,22 +23,22 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
         val categoryImage: Drawable? = null,
     )
 
-    fun loadRecipe(categoryId: Int, categoryName: String, categoryImageUrl: String) {
-        val recipe = STUB.getRecipesByCategoryId(categoryId)
+    fun loadRecipe(category: Category) {
+        val recipe = STUB.getRecipesByCategoryId(category.id)
 
         val drawable = try {
-            val inputStream: InputStream? = getApplication<Application>().assets?.open(categoryImageUrl)
+            val inputStream: InputStream? = getApplication<Application>().assets?.open(category.imageUrl)
             val image = Drawable.createFromStream(inputStream, null)
             inputStream?.close()
             image
         } catch (e: Exception) {
-            Log.e("RecipesListFragment", "Image not found $categoryImageUrl", e)
+            Log.e("RecipesListFragment", "Image not found ${category.imageUrl}", e)
             null
         }
 
         _state.value = _state.value?.copy(
             recipes = recipe,
-            categoryName = categoryName,
+            categoryName = category.title,
             categoryImage = drawable,
         )
     }
