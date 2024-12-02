@@ -16,25 +16,36 @@ import com.example.recipesapp.ui.recipes.favorites.FavoritesFragmentDirections
 import com.example.recipesapp.ui.recipes.list.RecipesListFragmentDirections
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.logging.HttpLoggingInterceptor
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity(), OnNavigationListener {
 
     companion object {
-        private const val CONNECTION_TIMEOUT = 10_000
-        private const val READ_TIMEOUT = 10_000
-        private const val REQUEST_METHOD_GET = "GET"
+        private const val CONNECTION_TIMEOUT = 10_000L
+        private const val READ_TIMEOUT = 10_000L
         private const val CATEGORY_API_URL = "https://recipes.androidsprint.ru/api/category"
         private const val RECIPES_API_URL = "https://recipes.androidsprint.ru/api/category/%d/recipes"
     }
 
     private val threadPool: ExecutorService = Executors.newFixedThreadPool(10)
+
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+
+    private val okHttpClient: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS)
+            .readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS)
+            .build()
+    }
 
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding
@@ -77,56 +88,45 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
             val requestThreadName = Thread.currentThread().name
             Log.d("MainActivity", "Выполняю запрос категорий на потоке: $requestThreadName")
 
-            val url = URL(CATEGORY_API_URL)
-            val connection = url.openConnection() as HttpURLConnection
+            val request = Request.Builder()
+                .url(CATEGORY_API_URL)
+                .build()
 
             try {
-                connection.requestMethod = REQUEST_METHOD_GET
-                connection.connectTimeout = CONNECTION_TIMEOUT
-                connection.readTimeout = READ_TIMEOUT
+                okHttpClient.newCall(request).execute().use { response ->
+                    if (response.isSuccessful) {
+                        response.body?.string()?.let { responseBody ->
+                            Log.d(
+                                "MainActivity",
+                                "Ответ от сервера (категории): $responseBody"
+                            )
 
-                val responseCode = connection.responseCode
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    val stream = connection.inputStream
-                    val reader = BufferedReader(InputStreamReader(stream))
-                    val response = StringBuilder()
+                            val gson = Gson()
+                            val listType = object : TypeToken<List<Category>>() {}.type
+                            val categories: List<Category> =
+                                gson.fromJson(responseBody, listType)
 
-                    var line: String?
-                    while (reader.readLine().also { line = it } != null) {
-                        response.append(line)
-                    }
+                            categories.forEach { category ->
+                                Log.d(
+                                    "MainActivity",
+                                    "Категория id=${category.id}, title=${category.title}, description=${category.description}, imageUrl=${category.imageUrl}"
+                                )
+                            }
 
-                    reader.close()
-                    stream.close()
-                    connection.disconnect() //delete??
-
-                    Log.d("MainActivity", "Ответ от сервера (категории): ${response.toString()}")
-
-                    val gson = Gson()
-                    val listType = object : TypeToken<List<Category>>() {}.type
-                    val categories: List<Category> = gson.fromJson(response.toString(), listType)
-
-                    categories.forEach { category ->
-                        Log.d(
-                            "MainActivity",
-                            "Категория id=${category.id}, title=${category.title}, description=${category.description}, imageUrl=${category.imageUrl}"
-                        )
-                    }
-
-                    val categoriesIds = categories.map { it.id }
-                    categoriesIds.forEach { categoryId ->
-                        threadPool.execute {
-                            getRecipesByCategoryId(categoryId)
+                            val categoriesIds = categories.map { it.id }
+                            categoriesIds.forEach { categoryId ->
+                                threadPool.execute {
+                                    getRecipesByCategoryId(categoryId)
+                                }
+                            }
                         }
-                    }
 
-                } else {
-                    Log.e("MainActivity", "Ошибка при запросе категорий. Ответ: $responseCode")
+                    } else {
+                        Log.e("MainActivity", "Ошибка при запросе категорий. Ответ: ${response.code}")
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("MainActivity", "Ошибка при выполнении запроса категорий", e)
-            } finally {
-                connection.disconnect()
             }
         }
     }
@@ -139,49 +139,36 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
         )
 
         val recipesUrl = String.format(Locale.getDefault(), RECIPES_API_URL, categoryId)
-        val url = URL(recipesUrl)
-        val connection = url.openConnection() as HttpURLConnection
+        val request = Request.Builder()
+            .url(recipesUrl)
+            .build()
 
         try {
-            connection.requestMethod = REQUEST_METHOD_GET
-            connection.connectTimeout = CONNECTION_TIMEOUT
-            connection.readTimeout = READ_TIMEOUT
+            okHttpClient.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    response.body?.string()?.let { responseBody ->
+                        Log.d(
+                            "MainActivity",
+                            "Ответ от сервера (рецепты для категории $categoryId): $responseBody"
+                        )
 
-            val responseCode = connection.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val stream = connection.inputStream
-                val reader = BufferedReader(InputStreamReader(stream))
-                val response = StringBuilder()
+                        val gson = Gson()
+                        val listType = object : TypeToken<List<Recipe>>() {}.type
+                        val recipes: List<Recipe> = gson.fromJson(responseBody, listType)
 
-                var line: String?
-                while (reader.readLine().also { line = it } != null) {
-                    response.append(line)
-                }
-
-                reader.close()
-                stream.close()
-                connection.disconnect() //delete?
-
-                Log.d(
-                    "MainActivity",
-                    "Ответ от сервера (рецепты для категории $categoryId): ${response.toString()}"
-                )
-
-                val gson = Gson()
-                val listType = object : TypeToken<List<Recipe>>() {}.type
-                val recipes: List<Recipe> = gson.fromJson(response.toString(), listType)
-
-                recipes.forEach { recipe ->
-                    Log.d(
+                        recipes.forEach { recipe ->
+                            Log.d(
+                                "MainActivity",
+                                "Рецепт id=${recipe.id}, title=${recipe.title}, ingredients=${recipe.ingredients}, method=${recipe.method},imageUrl=${recipe.imageUrl}"
+                            )
+                        }
+                    }
+                } else {
+                    Log.e(
                         "MainActivity",
-                        "Рецепт id=${recipe.id}, title=${recipe.title}, ingredients=${recipe.ingredients}, method=${recipe.method},imageUrl=${recipe.imageUrl}"
+                        "Ошибка при запросе рецептов для категории $categoryId. Ответ: ${response.code}"
                     )
                 }
-            } else {
-                Log.e(
-                    "MainActivity",
-                    "Ошибка при запросе рецептов для категории $categoryId. Ответ: $responseCode"
-                )
             }
         } catch (e: Exception) {
             Log.e(
@@ -189,8 +176,6 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
                 "Ошибка при выполнении запроса рецептов для категории $categoryId",
                 e
             )
-        } finally {
-            connection.disconnect()
         }
     }
 
