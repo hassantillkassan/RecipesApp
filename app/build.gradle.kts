@@ -44,6 +44,7 @@ android {
 dependencies {
 
     implementation(libs.gson)
+    implementation (libs.converter.gson)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
@@ -63,4 +64,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.okhttp)
     implementation(libs.okhttp3.logging.interceptor)
+    implementation (libs.retrofit)
 }
