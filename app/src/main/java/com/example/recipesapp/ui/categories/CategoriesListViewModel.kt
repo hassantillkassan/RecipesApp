@@ -1,21 +1,18 @@
 package com.example.recipesapp.ui.categories
 
 import android.app.Application
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.recipesapp.ThreadPoolProvider
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Category
-import java.util.concurrent.Executors
 
 class CategoriesListViewModel(application: Application) : AndroidViewModel(application) {
 
     private val recipesRepository = RecipesRepository()
 
-    private val executor = Executors.newSingleThreadExecutor()
+    private val executor = ThreadPoolProvider.threadPool
 
     private val _state = MutableLiveData(CategoriesListState())
     val state: LiveData<CategoriesListState>
@@ -23,32 +20,26 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
 
     data class CategoriesListState(
         val categories: List<Category> = emptyList(),
+        val errorMessage: String? = null,
     )
 
     fun loadCategories() {
-        executor.execute{
+        executor.execute {
             val categories = recipesRepository.getCategories()
 
             if (categories != null) {
-                Handler(Looper.getMainLooper()).post{
-                    _state.value = _state.value?.copy(
+                _state.postValue(
+                    _state.value?.copy(
                         categories = categories,
                     )
-                }
+                )
             } else {
-                Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(
-                        getApplication(),
-                        "Ошибка получения данных",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                _state.postValue(
+                    _state.value?.copy(
+                        errorMessage = "Ошибка получения данных",
+                    )
+                )
             }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        executor.shutdown()
     }
 }

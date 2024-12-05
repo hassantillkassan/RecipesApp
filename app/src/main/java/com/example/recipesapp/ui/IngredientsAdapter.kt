@@ -35,21 +35,34 @@ class IngredientsAdapter(
         with(viewHolder.binding) {
             tvIngredientDescription.text = ingredient.description
 
-            val quantityBD = BigDecimal(quantity)
-            val ingredientCountBD = BigDecimal(ingredient.quantity)
+            val displayQuantity: String = try {
+                val ingredientQuantityBD = BigDecimal(ingredient.quantity)
+                val multiplierBD = BigDecimal(quantity)
 
-            val totalQuantity = ingredientCountBD.multiply(quantityBD)
+                val totalQuantity = ingredientQuantityBD.multiply(multiplierBD)
 
-            val displayQuantity = totalQuantity
-                .setScale(1, RoundingMode.HALF_UP)
-                .stripTrailingZeros()
-                .toPlainString()
+                totalQuantity
+                    .setScale(1, RoundingMode.HALF_UP)
+                    .stripTrailingZeros()
+                    .toPlainString()
+            } catch (e: NumberFormatException) {
+                ingredient.quantity
+            }
 
-            tvIngredientQuantity.text = root.context.getString(
-                R.string.text_ingredient_quantity,
-                displayQuantity,
-                ingredient.unitOfMeasure
-            )
+            val unit = ingredient.unitOfMeasure
+            val quantityText = if (displayQuantity.isNotBlank() && unit.isNotBlank()) {
+                root.context.getString(
+                    R.string.text_ingredient_quantity,
+                    displayQuantity,
+                    unit
+                )
+            } else {
+                root.context.getString(
+                    R.string.text_ingredient_quantity_no_unit,
+                    displayQuantity
+                )
+            }
+            tvIngredientQuantity.text = quantityText
         }
     }
 

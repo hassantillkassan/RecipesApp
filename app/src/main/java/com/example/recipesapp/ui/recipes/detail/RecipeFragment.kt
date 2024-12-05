@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -127,6 +128,10 @@ class RecipeFragment : Fragment() {
                 recipeBinding.tvPortionQuantity.text =
                     getString(R.string.text_portions, state.portionCount)
                 ingredientsAdapter.updateIngredients(state.portionCount)
+            }
+
+            state.errorMessage?.let { errorMessage ->
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
             }
         }
     }

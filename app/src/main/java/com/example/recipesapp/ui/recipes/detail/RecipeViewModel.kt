@@ -3,23 +3,20 @@ package com.example.recipesapp.ui.recipes.detail
 import android.app.Application
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.recipesapp.ThreadPoolProvider
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Recipe
 import java.io.InputStream
-import java.util.concurrent.Executors
 
 class RecipeViewModel(application: Application) : AndroidViewModel(application) {
 
     private val recipesRepository = RecipesRepository()
 
-    private val executor = Executors.newSingleThreadExecutor()
+    private val executor = ThreadPoolProvider.threadPool
 
     private val _state = MutableLiveData(RecipeState())
     val state: LiveData<RecipeState>
@@ -30,6 +27,7 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         val portionCount: Int = 1,
         val isFavorite: Boolean = false,
         val recipeImage: Drawable? = null,
+        val errorMessage: String? = null,
     )
 
     fun loadRecipe(recipeId: Int) {
@@ -49,21 +47,19 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
                     null
                 }
 
-                Handler(Looper.getMainLooper()).post {
-                    _state.value = _state.value?.copy(
+                _state.postValue(
+                    _state.value?.copy(
                         recipe = recipe,
                         isFavorite = isFavorite,
                         recipeImage = recipeImage,
                     )
-                }
+                )
             } else {
-                Handler(Looper.getMainLooper()).post{
-                    Toast.makeText(
-                        getApplication(),
-                        "Ошибка получения данных",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                _state.postValue(
+                    _state.value?.copy(
+                        errorMessage = "Ошибка получения данных",
+                    )
+                )
             }
         }
     }
@@ -100,11 +96,6 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
 
     fun updatePortionCount(portionCount: Int) {
         _state.value = _state.value?.copy(portionCount = portionCount)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        executor.shutdown()
     }
 
     companion object {

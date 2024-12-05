@@ -1,5 +1,6 @@
 package com.example.recipesapp.data
 
+import android.util.Log
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
 import okhttp3.OkHttpClient
@@ -48,11 +49,11 @@ class RecipesRepository {
             if (response.isSuccessful) {
                 response.body()
             } else {
-                println("Error: ${response.code()} - ${response.message()}")
+                Log.e("RecipesRepository", "Ошибка: ${response.code()} - ${response.message()}")
                 null
             }
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.e("RecipesRepository", "IOException при получении категорий", e)
             null
         }
     }
@@ -63,11 +64,11 @@ class RecipesRepository {
             if (response.isSuccessful) {
                 response.body()
             } else {
-                println("Error: ${response.code()} - ${response.message()}")
+                Log.e("RecipesRepository", "Ошибка: ${response.code()} - ${response.message()}")
                 null
             }
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.e("RecipesRepository", "IOException при получении рецептов по ID категории", e)
             null
         }
     }
@@ -78,27 +79,27 @@ class RecipesRepository {
             if (response.isSuccessful) {
                 response.body()
             } else {
-                println("Error: ${response.code()} - ${response.message()}")
+                Log.e("RecipesRepository", "Ошибка: ${response.code()} - ${response.message()}")
                 null
             }
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.e("RecipesRepository", "IOException при получении категории по ID", e)
             null
         }
     }
 
     fun getRecipesByIds(ids: Set<Int>): List<Recipe>? {
         return try {
-            val listOfIds= ids.toList()
-            val response: Response<List<Recipe>> = apiService.getRecipesByIds(listOfIds).execute()
+            val idsString = ids.joinToString(",")
+            val response: Response<List<Recipe>> = apiService.getRecipesByIds(idsString).execute()
             if (response.isSuccessful) {
                 response.body()
             } else {
-                println("Error: ${response.code()} - ${response.message()}")
+                Log.e("RecipesRepository", "Ошибка: ${response.code()} - ${response.message()}")
                 null
             }
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.e("RecipesRepository", "IOException при получении рецептов по ID", e)
             null
         }
     }
@@ -109,11 +110,11 @@ class RecipesRepository {
             if (response.isSuccessful) {
                 response.body()
             } else {
-                println("Error: ${response.code()} - ${response.message()}")
+                Log.e("RecipesRepository", "Ошибка: ${response.code()} - ${response.message()}")
                 null
             }
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.e("RecipesRepository", "IOException при получении рецепта по ID", e)
             null
         }
     }

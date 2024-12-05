@@ -2,24 +2,21 @@ package com.example.recipesapp.ui.recipes.list
 
 import android.app.Application
 import android.graphics.drawable.Drawable
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.recipesapp.ThreadPoolProvider
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
 import java.io.InputStream
-import java.util.concurrent.Executors
 
 class RecipesListViewModel(application: Application) : AndroidViewModel(application) {
 
     private val recipesRepository = RecipesRepository()
 
-    private val executor = Executors.newSingleThreadExecutor()
+    private val executor = ThreadPoolProvider.threadPool
 
     private val _state = MutableLiveData(RecipesListState())
     val state: LiveData<RecipesListState>
@@ -29,6 +26,7 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
         val recipes: List<Recipe> = emptyList(),
         val categoryName: String = "",
         val categoryImage: Drawable? = null,
+        val errorMessage: String? = null,
     )
 
     fun loadRecipe(category: Category) {
@@ -46,27 +44,20 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
             }
 
             if (recipes != null) {
-                Handler(Looper.getMainLooper()).post {
-                    _state.value = _state.value?.copy(
+                _state.postValue(
+                    _state.value?.copy(
                         recipes = recipes,
                         categoryName = category.title,
                         categoryImage = drawable,
                     )
-                }
+                )
             } else {
-                Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(
-                        getApplication(),
-                        "Ошибка получения данных",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                _state.postValue(
+                    _state.value?.copy(
+                        errorMessage = "Ошибка получения данных",
+                    )
+                )
             }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        executor.shutdown()
     }
 }

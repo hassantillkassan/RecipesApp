@@ -46,6 +46,10 @@ class FavoritesFragment : Fragment() {
                 favoritesBinding.rvFavorites.visibility = View.VISIBLE
                 favoritesBinding.tvEmptyFavorites.visibility = View.GONE
             }
+
+            state.errorMessage?.let { errorMessage ->
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+            }
         }
 
         viewModel.loadFavorites()

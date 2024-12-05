@@ -43,6 +43,10 @@ class CategoriesListFragment : Fragment() {
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             categoriesAdapter?.updateData(state.categories)
+
+            state.errorMessage?.let { errorMessage ->
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+            }
         }
 
         viewModel.loadCategories()
