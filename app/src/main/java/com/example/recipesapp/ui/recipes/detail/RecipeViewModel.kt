@@ -7,11 +7,16 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.recipesapp.data.STUB
+import com.example.recipesapp.ThreadPoolProvider
+import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Recipe
 import java.io.InputStream
 
 class RecipeViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val recipesRepository = RecipesRepository()
+
+    private val executor = ThreadPoolProvider.threadPool
 
     private val _state = MutableLiveData(RecipeState())
     val state: LiveData<RecipeState>
@@ -22,28 +27,39 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         val portionCount: Int = 1,
         val isFavorite: Boolean = false,
         val recipeImage: Drawable? = null,
+        val errorMessage: String? = null,
     )
 
     fun loadRecipe(recipeId: Int) {
-        // TODO: load from network
+        executor.execute {
+            val recipe = recipesRepository.getRecipeById(recipeId)
+            val favorites = getFavorites()
 
-        val recipe = STUB.getRecipeById(recipeId)
-        val favorites = getFavorites()
+            if (recipe != null) {
+                val isFavorite = favorites.contains(recipeId.toString())
+                val recipeImage = try {
+                    val inputStream: InputStream = getApplication<Application>().assets.open(recipe.imageUrl)
+                    val drawable = Drawable.createFromStream(inputStream, null)
+                    inputStream.close()
+                    drawable
+                } catch (e: Exception) {
+                    Log.e("RecipeViewModel", "Image not found ${recipe.imageUrl}", e)
+                    null
+                }
 
-        _state.value = _state.value?.copy(
-            recipe = recipe,
-            isFavorite = favorites.contains(recipeId.toString()),
-        )
-
-        recipe?.let {
-            try {
-                val inputStream: InputStream = getApplication<Application>().assets.open(it.imageUrl)
-                val drawable = Drawable.createFromStream(inputStream, null)
-                inputStream.close()
-                _state.value = _state.value?.copy(recipeImage = drawable)
-            } catch (e: Exception) {
-                Log.e("RecipeViewModel", "Image not found ${recipe.imageUrl}", e)
-                null
+                _state.postValue(
+                    _state.value?.copy(
+                        recipe = recipe,
+                        isFavorite = isFavorite,
+                        recipeImage = recipeImage,
+                    )
+                )
+            } else {
+                _state.postValue(
+                    _state.value?.copy(
+                        errorMessage = "Ошибка получения данных",
+                    )
+                )
             }
         }
     }
