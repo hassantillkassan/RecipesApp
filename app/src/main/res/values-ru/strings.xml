@@ -12,4 +12,6 @@
     <string name="text_favorites_image_description">Изображение обложки избранного</string>
     <string name="text_empty_favorites">Вы ещё не добавили ни одного рецепта в избранное</string>
     <string name="warning_recipe_not_found">Рецепт не найден</string>
+    <string name="error_data_fetch">Ошибка получения данных</string>
+    <string name="error_unknown">Произошла неизвестная ошибка</string>
 </resources>

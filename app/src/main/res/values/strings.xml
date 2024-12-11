@@ -14,4 +14,6 @@
     <string name="text_favorites_image_description">Cover image of your favorites</string>
     <string name="text_empty_favorites">You haven\'t added any recipes to your favorites yet</string>
     <string name="warning_recipe_not_found">Recipe not found</string>
+    <string name="error_data_fetch">Error receiving data</string>
+    <string name="error_unknown">An unknown error occurred</string>
 </resources>

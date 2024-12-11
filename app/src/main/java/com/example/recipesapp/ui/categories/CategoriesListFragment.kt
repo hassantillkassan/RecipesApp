@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import com.example.recipesapp.R
 import com.example.recipesapp.databinding.FragmentListCategoriesBinding
+import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.CategoriesListAdapter
 import com.example.recipesapp.ui.OnNavigationListener
 
@@ -44,8 +46,18 @@ class CategoriesListFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             categoriesAdapter?.updateData(state.categories)
 
-            state.errorMessage?.let { errorMessage ->
-                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+            state.error?.let { error ->
+                val errorMessage = when (error) {
+                    ErrorType.DATA_FETCH_ERROR -> getString(R.string.error_data_fetch)
+                    ErrorType.UNKNOWN_ERROR -> getString(R.string.error_unknown)
+                }
+                Toast.makeText(
+                    requireContext(),
+                    errorMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                viewModel.clearError()
             }
         }
 

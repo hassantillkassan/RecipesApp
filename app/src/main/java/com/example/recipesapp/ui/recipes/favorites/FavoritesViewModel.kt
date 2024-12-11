@@ -6,15 +6,15 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.recipesapp.ThreadPoolProvider
+import com.example.recipesapp.common.Constants
+import com.example.recipesapp.common.ThreadPoolProvider
 import com.example.recipesapp.data.RecipesRepository
+import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.model.Recipe
 
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
 
     private val recipesRepository = RecipesRepository()
-
-    private val executor = ThreadPoolProvider.threadPool
 
     private val _state = MutableLiveData(FavoritesState())
     val state: LiveData<FavoritesState>
@@ -23,31 +23,41 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     data class FavoritesState(
         val recipes: List<Recipe> = emptyList(),
         val isEmpty: Boolean = true,
-        val errorMessage: String? = null,
+        val error: ErrorType? = null,
     )
 
     fun loadFavorites() {
-        executor.execute{
+        ThreadPoolProvider.threadPool.execute{
             try {
                 val favoritesIds = getFavorites()
                 val favoriteRecipes = recipesRepository.getRecipesByIds(favoritesIds)
 
                 if (favoriteRecipes != null) {
+                    val updatedFavoriteRecipe = favoriteRecipes.map { recipe ->
+                        recipe.copy(imageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + recipe.imageUrl)
+                    }
+
                     _state.postValue(
                         _state.value?.copy(
-                            recipes = favoriteRecipes,
+                            recipes = updatedFavoriteRecipe,
                             isEmpty = favoriteRecipes.isEmpty(),
+                            error = null,
                         )
                     )
                 } else {
                     _state.postValue(
                         _state.value?.copy(
-                            errorMessage = "Ошибка получения данных",
+                            error = ErrorType.DATA_FETCH_ERROR,
                         )
                     )
                 }
             } catch (e: Exception) {
-                Log.e("FavoritesViewModel", "Ошибка при загрузке избранных рецептов")
+                Log.e("FavoritesViewModel", "Ошибка при загрузке избранных рецептов", e)
+                _state.postValue(
+                    _state.value?.copy(
+                        error = ErrorType.UNKNOWN_ERROR,
+                    )
+                )
             }
         }
     }
@@ -58,5 +68,9 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
         val favoriteIdsStringSet = sharedPreferences.getStringSet("favorites_recipes", emptySet()) ?: emptySet()
 
         return favoriteIdsStringSet.mapNotNull { it.toIntOrNull() }.toSet()
+    }
+
+    fun clearError() {
+        _state.postValue(_state.value?.copy(error = null))
     }
 }
