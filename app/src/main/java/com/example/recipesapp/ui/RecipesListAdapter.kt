@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.recipesapp.R
+import com.example.recipesapp.common.loadImage
 import com.example.recipesapp.databinding.ItemRecipeBinding
 import com.example.recipesapp.model.Recipe
 
@@ -33,11 +33,7 @@ class RecipesListAdapter(
         with(viewHolder.binding) {
             tvTitle.text = recipe.title
 
-            Glide.with(ivRecipeImage.context)
-                .load(recipe.imageUrl)
-                .placeholder(R.drawable.img_placeholder)
-                .error(R.drawable.img_error)
-                .into(ivRecipeImage)
+            ivRecipeImage.loadImage(recipe.imageUrl)
 
             ivRecipeImage.contentDescription = root.context.getString(
                 R.string.text_recipe_image_description,

@@ -40,26 +40,38 @@ class FavoritesFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             recipesAdapter?.updateData(state.recipes)
 
-            if (state.isEmpty) {
-                favoritesBinding.rvFavorites.visibility = View.GONE
-                favoritesBinding.tvEmptyFavorites.visibility = View.VISIBLE
-            } else {
-                favoritesBinding.rvFavorites.visibility = View.VISIBLE
-                favoritesBinding.tvEmptyFavorites.visibility = View.GONE
-            }
-
-            state.error?.let { error ->
-                val errorMessage = when (error) {
-                    ErrorType.DATA_FETCH_ERROR -> getString(R.string.error_data_fetch)
-                    ErrorType.UNKNOWN_ERROR -> getString(R.string.error_unknown)
+            when {
+                state.isLoading -> {
+                    favoritesBinding.rvFavorites.visibility = View.GONE
+                    favoritesBinding.tvEmptyFavorites.visibility = View.GONE
                 }
-                Toast.makeText(
-                    requireContext(),
-                    errorMessage,
-                    Toast.LENGTH_SHORT
-                ).show()
 
-                viewModel.clearError()
+                state.isEmpty -> {
+                    favoritesBinding.rvFavorites.visibility = View.GONE
+                    favoritesBinding.tvEmptyFavorites.visibility = View.VISIBLE
+                }
+
+                state.error != null -> {
+                    favoritesBinding.rvFavorites.visibility = View.GONE
+                    favoritesBinding.tvEmptyFavorites.visibility = View.GONE
+
+                    val errorMessage = when (state.error) {
+                        ErrorType.DATA_FETCH_ERROR -> getString(R.string.error_data_fetch)
+                        ErrorType.UNKNOWN_ERROR -> getString(R.string.error_unknown)
+                    }
+                    Toast.makeText(
+                        requireContext(),
+                        errorMessage,
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    viewModel.clearError()
+                }
+
+                else -> {
+                    favoritesBinding.rvFavorites.visibility = View.VISIBLE
+                    favoritesBinding.tvEmptyFavorites.visibility = View.GONE
+                }
             }
         }
 

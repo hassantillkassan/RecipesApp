@@ -23,13 +23,36 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     data class FavoritesState(
         val recipes: List<Recipe> = emptyList(),
         val isEmpty: Boolean = true,
+        val isLoading: Boolean = true,
         val error: ErrorType? = null,
     )
 
     fun loadFavorites() {
+        _state.postValue(
+            _state.value?.copy(
+                isEmpty = false,
+                isLoading = true,
+                error = null,
+            )
+        )
+
         ThreadPoolProvider.threadPool.execute{
             try {
                 val favoritesIds = getFavorites()
+
+                if (favoritesIds.isEmpty()) {
+                    _state.postValue(
+                        _state.value?.copy(
+                            recipes = emptyList(),
+                            isEmpty = true,
+                            isLoading = false,
+                            error = null,
+                        )
+                    )
+
+                    return@execute
+                }
+
                 val favoriteRecipes = recipesRepository.getRecipesByIds(favoritesIds)
 
                 if (favoriteRecipes != null) {
@@ -41,12 +64,15 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
                         _state.value?.copy(
                             recipes = updatedFavoriteRecipe,
                             isEmpty = favoriteRecipes.isEmpty(),
+                            isLoading = false,
                             error = null,
                         )
                     )
                 } else {
                     _state.postValue(
                         _state.value?.copy(
+                            isEmpty = false,
+                            isLoading = false,
                             error = ErrorType.DATA_FETCH_ERROR,
                         )
                     )
@@ -55,6 +81,8 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
                 Log.e("FavoritesViewModel", "Ошибка при загрузке избранных рецептов", e)
                 _state.postValue(
                     _state.value?.copy(
+                        isEmpty = false,
+                        isLoading = false,
                         error = ErrorType.UNKNOWN_ERROR,
                     )
                 )

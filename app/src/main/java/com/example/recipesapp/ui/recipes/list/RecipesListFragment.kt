@@ -9,8 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.recipesapp.R
+import com.example.recipesapp.common.loadImage
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.OnNavigationListener
@@ -63,11 +63,7 @@ class RecipesListFragment : Fragment() {
             recipesBinding.tvCategoryName.text = state.categoryName
 
             state.categoryImage?.let { imageUrl ->
-                Glide.with(recipesBinding.ivCategoryCoverImage.context)
-                    .load(imageUrl)
-                    .placeholder(R.drawable.img_placeholder)
-                    .error(R.drawable.img_error)
-                    .into(recipesBinding.ivCategoryCoverImage)
+                recipesBinding.ivCategoryCoverImage.loadImage(imageUrl)
             }
 
             recipesBinding.ivCategoryCoverImage.contentDescription = getString(
