@@ -1,6 +1,7 @@
 package com.example.recipesapp.data
 
 import android.util.Log
+import com.example.recipesapp.common.Constants
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
 import okhttp3.OkHttpClient
@@ -16,7 +17,6 @@ class RecipesRepository {
     companion object {
         private const val CONNECTION_TIMEOUT = 10_000L
         private const val READ_TIMEOUT = 10_000L
-        private const val BASE_URL = "https://recipes.androidsprint.ru/api/"
     }
 
     private val apiService: RecipeApiService
@@ -35,7 +35,7 @@ class RecipesRepository {
 
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(Constants.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

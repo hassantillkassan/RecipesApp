@@ -1,22 +1,20 @@
 package com.example.recipesapp.ui.recipes.list
 
 import android.app.Application
-import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.recipesapp.ThreadPoolProvider
+import com.example.recipesapp.common.Constants
+import com.example.recipesapp.common.ThreadPoolProvider
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Category
+import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.model.Recipe
-import java.io.InputStream
 
 class RecipesListViewModel(application: Application) : AndroidViewModel(application) {
 
     private val recipesRepository = RecipesRepository()
-
-    private val executor = ThreadPoolProvider.threadPool
 
     private val _state = MutableLiveData(RecipesListState())
     val state: LiveData<RecipesListState>
@@ -25,39 +23,47 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
     data class RecipesListState(
         val recipes: List<Recipe> = emptyList(),
         val categoryName: String = "",
-        val categoryImage: Drawable? = null,
-        val errorMessage: String? = null,
+        val categoryImage: String? = null,
+        val error: ErrorType? = null,
     )
 
     fun loadRecipe(category: Category) {
-        executor.execute {
-            val recipes = recipesRepository.getRecipesByCategoryId(category.id)
+        ThreadPoolProvider.threadPool.execute {
+            try {
+                val recipes = recipesRepository.getRecipesByCategoryId(category.id)
 
-            val drawable = try {
-                val inputStream: InputStream? = getApplication<Application>().assets?.open(category.imageUrl)
-                val image = Drawable.createFromStream(inputStream, null)
-                inputStream?.close()
-                image
-            } catch (e: Exception) {
-                Log.e("RecipesListFragment", "Image not found ${category.imageUrl}", e)
-                null
-            }
+                if (recipes != null) {
+                    val updatedRecipes = recipes.map { recipe ->
+                        recipe.copy(imageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + recipe.imageUrl)
+                    }
 
-            if (recipes != null) {
-                _state.postValue(
-                    _state.value?.copy(
-                        recipes = recipes,
-                        categoryName = category.title,
-                        categoryImage = drawable,
+                    _state.postValue(
+                        _state.value?.copy(
+                            recipes = updatedRecipes,
+                            categoryName = category.title,
+                            categoryImage = category.imageUrl,
+                            error = null,
+                        )
                     )
-                )
-            } else {
+                } else {
+                    _state.postValue(
+                        _state.value?.copy(
+                            error = ErrorType.DATA_FETCH_ERROR,
+                        )
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("RecipesListViewModel", "Ошибка при загрузке списка рецептов", e)
                 _state.postValue(
                     _state.value?.copy(
-                        errorMessage = "Ошибка получения данных",
+                        error = ErrorType.UNKNOWN_ERROR,
                     )
                 )
             }
         }
+    }
+
+    fun clearError() {
+        _state.postValue(_state.value?.copy(error = null))
     }
 }

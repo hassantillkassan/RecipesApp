@@ -1,16 +1,13 @@
 package com.example.recipesapp.ui
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipesapp.R
+import com.example.recipesapp.common.loadImage
 import com.example.recipesapp.databinding.ItemCategoryBinding
 import com.example.recipesapp.model.Category
-
-import java.io.InputStream
 
 class CategoriesListAdapter(
     private var dataSet: List<Category>,
@@ -38,14 +35,7 @@ class CategoriesListAdapter(
         binding.tvTitle.text = category.title
         binding.tvDescription.text = category.description
 
-        try {
-            val inputStream: InputStream? = binding.root.context?.assets?.open(category.imageUrl)
-            val drawable = Drawable.createFromStream(inputStream, null)
-            binding.ivCategoryImage.setImageDrawable(drawable)
-            inputStream?.close()
-        } catch (e: Exception) {
-            Log.e("CategoriesListAdapter", "Image not found ${category.imageUrl}", e)
-        }
+        binding.ivCategoryImage.loadImage(category.imageUrl)
 
         binding.ivCategoryImage.contentDescription = binding.root.context.getString(
             R.string.text_category_image_description,
