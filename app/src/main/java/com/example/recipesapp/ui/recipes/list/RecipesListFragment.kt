@@ -10,7 +10,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
+import com.example.recipesapp.common.loadImage
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
+import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.OnNavigationListener
 import com.example.recipesapp.ui.RecipesListAdapter
 
@@ -59,8 +61,9 @@ class RecipesListFragment : Fragment() {
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             recipesBinding.tvCategoryName.text = state.categoryName
-            state.categoryImage?.let { drawable ->
-                recipesBinding.ivCategoryCoverImage.setImageDrawable(drawable)
+
+            state.categoryImage?.let { imageUrl ->
+                recipesBinding.ivCategoryCoverImage.loadImage(imageUrl)
             }
 
             recipesBinding.ivCategoryCoverImage.contentDescription = getString(
@@ -70,8 +73,18 @@ class RecipesListFragment : Fragment() {
 
             recipesAdapter?.updateData(state.recipes)
 
-            state.errorMessage?.let { errorMessage ->
-                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+            state.error?.let { error ->
+                val errorMessage = when (error) {
+                    ErrorType.DATA_FETCH_ERROR -> getString(R.string.error_data_fetch)
+                    ErrorType.UNKNOWN_ERROR -> getString(R.string.error_unknown)
+                }
+                Toast.makeText(
+                    requireContext(),
+                    errorMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                viewModel.clearError()
             }
         }
 

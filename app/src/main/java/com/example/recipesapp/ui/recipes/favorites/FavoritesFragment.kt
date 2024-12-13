@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.FragmentFavoritesBinding
+import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.OnNavigationListener
 import com.example.recipesapp.ui.RecipesListAdapter
 
@@ -39,16 +40,38 @@ class FavoritesFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             recipesAdapter?.updateData(state.recipes)
 
-            if (state.isEmpty) {
-                favoritesBinding.rvFavorites.visibility = View.GONE
-                favoritesBinding.tvEmptyFavorites.visibility = View.VISIBLE
-            } else {
-                favoritesBinding.rvFavorites.visibility = View.VISIBLE
-                favoritesBinding.tvEmptyFavorites.visibility = View.GONE
-            }
+            when {
+                state.isLoading -> {
+                    favoritesBinding.rvFavorites.visibility = View.GONE
+                    favoritesBinding.tvEmptyFavorites.visibility = View.GONE
+                }
 
-            state.errorMessage?.let { errorMessage ->
-                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+                state.isEmpty -> {
+                    favoritesBinding.rvFavorites.visibility = View.GONE
+                    favoritesBinding.tvEmptyFavorites.visibility = View.VISIBLE
+                }
+
+                state.error != null -> {
+                    favoritesBinding.rvFavorites.visibility = View.GONE
+                    favoritesBinding.tvEmptyFavorites.visibility = View.GONE
+
+                    val errorMessage = when (state.error) {
+                        ErrorType.DATA_FETCH_ERROR -> getString(R.string.error_data_fetch)
+                        ErrorType.UNKNOWN_ERROR -> getString(R.string.error_unknown)
+                    }
+                    Toast.makeText(
+                        requireContext(),
+                        errorMessage,
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    viewModel.clearError()
+                }
+
+                else -> {
+                    favoritesBinding.rvFavorites.visibility = View.VISIBLE
+                    favoritesBinding.tvEmptyFavorites.visibility = View.GONE
+                }
             }
         }
 
@@ -79,13 +102,6 @@ class FavoritesFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
-
-        /*val recipe = STUB.getRecipeById(recipeId)
-        if (recipe != null) {
-            (activity as? OnNavigationListener)?.navigateToRecipe(recipe)
-        } else {
-            Toast.makeText(context, getString(R.string.warning_recipe_not_found), Toast.LENGTH_SHORT).show()
-        }*/
     }
 
     override fun onDestroyView() {

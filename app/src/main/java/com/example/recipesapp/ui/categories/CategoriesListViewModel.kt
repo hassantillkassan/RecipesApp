@@ -1,18 +1,19 @@
 package com.example.recipesapp.ui.categories
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.recipesapp.ThreadPoolProvider
+import com.example.recipesapp.common.Constants
+import com.example.recipesapp.common.ThreadPoolProvider
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Category
+import com.example.recipesapp.model.ErrorType
 
 class CategoriesListViewModel(application: Application) : AndroidViewModel(application) {
 
     private val recipesRepository = RecipesRepository()
-
-    private val executor = ThreadPoolProvider.threadPool
 
     private val _state = MutableLiveData(CategoriesListState())
     val state: LiveData<CategoriesListState>
@@ -20,26 +21,44 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
 
     data class CategoriesListState(
         val categories: List<Category> = emptyList(),
-        val errorMessage: String? = null,
+        val error: ErrorType? = null,
     )
 
     fun loadCategories() {
-        executor.execute {
-            val categories = recipesRepository.getCategories()
+        ThreadPoolProvider.threadPool.execute {
+            try {
+                val categories = recipesRepository.getCategories()
 
-            if (categories != null) {
-                _state.postValue(
-                    _state.value?.copy(
-                        categories = categories,
+                if (categories != null) {
+                    val updatedCategories = categories.map { category ->
+                        category.copy(imageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + category.imageUrl)
+                    }
+
+                    _state.postValue(
+                        _state.value?.copy(
+                            categories = updatedCategories,
+                            error = null,
+                        )
                     )
-                )
-            } else {
+                } else {
+                    _state.postValue(
+                        _state.value?.copy(
+                            error = ErrorType.DATA_FETCH_ERROR,
+                        )
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("CategoriesListViewModel", "Ошибка при загрузке категорий", e)
                 _state.postValue(
                     _state.value?.copy(
-                        errorMessage = "Ошибка получения данных",
+                        error = ErrorType.UNKNOWN_ERROR,
                     )
                 )
             }
         }
+    }
+
+    fun clearError() {
+        _state.postValue(_state.value?.copy(error = null))
     }
 }

@@ -13,7 +13,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
+import com.example.recipesapp.common.loadImage
 import com.example.recipesapp.databinding.FragmentRecipeBinding
+import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.IngredientsAdapter
 import com.example.recipesapp.ui.MethodAdapter
 import com.google.android.material.divider.MaterialDividerItemDecoration
@@ -108,12 +110,10 @@ class RecipeFragment : Fragment() {
             state.recipe?.let { recipe ->
                 recipeBinding.tvRecipe.text = recipe.title
 
-                val drawable = state.recipeImage
-                if (drawable != null) {
-                    recipeBinding.ivRecipeImage.setImageDrawable(drawable)
-                } else {
-                    recipeBinding.ivRecipeImage.setImageResource(R.drawable.burger)
+                state.recipeImage?.let { imageUrl ->
+                    recipeBinding.ivRecipeImage.loadImage(imageUrl)
                 }
+
 
                 recipeBinding.ivRecipeImage.contentDescription = getString(
                     R.string.text_recipe_image_description,
@@ -130,8 +130,18 @@ class RecipeFragment : Fragment() {
                 ingredientsAdapter.updateIngredients(state.portionCount)
             }
 
-            state.errorMessage?.let { errorMessage ->
-                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+            state.error?.let { error ->
+                val errorMessage = when (error) {
+                    ErrorType.DATA_FETCH_ERROR -> getString(R.string.error_data_fetch)
+                    ErrorType.UNKNOWN_ERROR -> getString(R.string.error_unknown)
+                }
+                Toast.makeText(
+                    requireContext(),
+                    errorMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                viewModel.clearError()
             }
         }
     }

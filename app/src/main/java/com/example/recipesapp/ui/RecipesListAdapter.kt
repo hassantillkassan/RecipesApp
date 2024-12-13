@@ -1,15 +1,13 @@
 package com.example.recipesapp.ui
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipesapp.R
+import com.example.recipesapp.common.loadImage
 import com.example.recipesapp.databinding.ItemRecipeBinding
 import com.example.recipesapp.model.Recipe
-import java.io.InputStream
 
 class RecipesListAdapter(
     private var dataSet: List<Recipe>,
@@ -35,14 +33,7 @@ class RecipesListAdapter(
         with(viewHolder.binding) {
             tvTitle.text = recipe.title
 
-            try {
-                val inputStream: InputStream = root.context.assets.open(recipe.imageUrl)
-                val drawable = Drawable.createFromStream(inputStream, null)
-                ivRecipeImage.setImageDrawable(drawable)
-                inputStream.close()
-            } catch (e: Exception) {
-                Log.e("RecipesListAdapter", "Image not found ${recipe.imageUrl}", e)
-            }
+            ivRecipeImage.loadImage(recipe.imageUrl)
 
             ivRecipeImage.contentDescription = root.context.getString(
                 R.string.text_recipe_image_description,
