@@ -4,9 +4,11 @@ import android.util.Log
 import com.example.recipesapp.common.Constants
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Response
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
@@ -43,76 +45,61 @@ class RecipesRepository {
         apiService = retrofit.create(RecipeApiService::class.java)
     }
 
-    fun getCategories(): List<Category>? {
-        return try {
-            val response: Response<List<Category>> = apiService.getCategories().execute()
-            if (response.isSuccessful) {
-                response.body()
-            } else {
-                Log.e("RecipesRepository", "Ошибка: ${response.code()} - ${response.message()}")
-                null
-            }
+    suspend fun getCategories(): List<Category>? = withContext(Dispatchers.IO) {
+        try {
+            apiService.getCategories()
+        } catch (e: HttpException) {
+            Log.e("RecipesRepository", "HTTP ошибка ${e.code()} - ${e.message()}", e)
+            null
         } catch (e: IOException) {
             Log.e("RecipesRepository", "IOException при получении категорий", e)
             null
         }
     }
 
-    fun getRecipesByCategoryId(categoryId: Int): List<Recipe>? {
-        return try {
-            val response: Response<List<Recipe>> = apiService.getRecipesByCategoryId(categoryId).execute()
-            if (response.isSuccessful) {
-                response.body()
-            } else {
-                Log.e("RecipesRepository", "Ошибка: ${response.code()} - ${response.message()}")
-                null
-            }
+    suspend fun getRecipesByCategoryId(categoryId: Int): List<Recipe>? = withContext(Dispatchers.IO) {
+        try {
+            apiService.getRecipesByCategoryId(categoryId)
+        } catch (e: HttpException) {
+            Log.e("RecipesRepository", "HTTP ошибка ${e.code()} - ${e.message()}", e)
+            null
         } catch (e: IOException) {
             Log.e("RecipesRepository", "IOException при получении рецептов по ID категории", e)
             null
         }
     }
 
-    fun getCategoryById(categoryId: Int): Category? {
-        return try {
-            val response: Response<Category> = apiService.getCategoryById(categoryId).execute()
-            if (response.isSuccessful) {
-                response.body()
-            } else {
-                Log.e("RecipesRepository", "Ошибка: ${response.code()} - ${response.message()}")
-                null
-            }
+    suspend fun getCategoryById(categoryId: Int): Category? = withContext(Dispatchers.IO) {
+        try {
+            apiService.getCategoryById(categoryId)
+        } catch (e: HttpException) {
+            Log.e("RecipesRepository", "HTTP ошибка ${e.code()} - ${e.message()}", e)
+            null
         } catch (e: IOException) {
             Log.e("RecipesRepository", "IOException при получении категории по ID", e)
             null
         }
     }
 
-    fun getRecipesByIds(ids: Set<Int>): List<Recipe>? {
-        return try {
+    suspend fun getRecipesByIds(ids: Set<Int>): List<Recipe>? = withContext(Dispatchers.IO) {
+        try {
             val idsString = ids.joinToString(",")
-            val response: Response<List<Recipe>> = apiService.getRecipesByIds(idsString).execute()
-            if (response.isSuccessful) {
-                response.body()
-            } else {
-                Log.e("RecipesRepository", "Ошибка: ${response.code()} - ${response.message()}")
-                null
-            }
+            apiService.getRecipesByIds(idsString)
+        } catch (e: HttpException) {
+            Log.e("RecipesRepository", "HTTP ошибка ${e.code()} - ${e.message()}", e)
+            null
         } catch (e: IOException) {
             Log.e("RecipesRepository", "IOException при получении рецептов по ID", e)
             null
         }
     }
 
-    fun getRecipeById (recipeId: Int): Recipe? {
-        return try {
-            val response: Response<Recipe> = apiService.getRecipeById(recipeId).execute()
-            if (response.isSuccessful) {
-                response.body()
-            } else {
-                Log.e("RecipesRepository", "Ошибка: ${response.code()} - ${response.message()}")
-                null
-            }
+    suspend fun getRecipeById(recipeId: Int): Recipe? = withContext(Dispatchers.IO) {
+        try {
+            apiService.getRecipeById(recipeId)
+        } catch (e: HttpException) {
+            Log.e("RecipesRepository", "HTTP ошибка ${e.code()} - ${e.message()}", e)
+            null
         } catch (e: IOException) {
             Log.e("RecipesRepository", "IOException при получении рецепта по ID", e)
             null

@@ -5,11 +5,12 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.recipesapp.common.Constants
-import com.example.recipesapp.common.ThreadPoolProvider
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.ErrorType
+import kotlinx.coroutines.launch
 
 class CategoriesListViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -25,7 +26,7 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
     )
 
     fun loadCategories() {
-        ThreadPoolProvider.threadPool.execute {
+        viewModelScope.launch {
             try {
                 val categories = recipesRepository.getCategories()
 

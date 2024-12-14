@@ -6,11 +6,12 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.recipesapp.common.Constants
-import com.example.recipesapp.common.ThreadPoolProvider
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.model.Recipe
+import kotlinx.coroutines.launch
 
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -36,7 +37,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
             )
         )
 
-        ThreadPoolProvider.threadPool.execute{
+        viewModelScope.launch {
             try {
                 val favoritesIds = getFavorites()
 
@@ -50,7 +51,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
                         )
                     )
 
-                    return@execute
+                    return@launch
                 }
 
                 val favoriteRecipes = recipesRepository.getRecipesByIds(favoritesIds)
@@ -92,8 +93,12 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun getFavorites(): Set<Int> {
         val sharedPreferences =
-            getApplication<Application>().getSharedPreferences("favorite_recipes_prefs", Context.MODE_PRIVATE)
-        val favoriteIdsStringSet = sharedPreferences.getStringSet("favorites_recipes", emptySet()) ?: emptySet()
+            getApplication<Application>().getSharedPreferences(
+                "favorite_recipes_prefs",
+                Context.MODE_PRIVATE
+            )
+        val favoriteIdsStringSet =
+            sharedPreferences.getStringSet("favorites_recipes", emptySet()) ?: emptySet()
 
         return favoriteIdsStringSet.mapNotNull { it.toIntOrNull() }.toSet()
     }

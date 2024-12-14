@@ -6,11 +6,12 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.recipesapp.common.Constants
-import com.example.recipesapp.common.ThreadPoolProvider
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.model.Recipe
+import kotlinx.coroutines.launch
 
 class RecipeViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -29,7 +30,7 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
     )
 
     fun loadRecipe(recipeId: Int) {
-        ThreadPoolProvider.threadPool.execute {
+        viewModelScope.launch {
             try {
                 val recipe = recipesRepository.getRecipeById(recipeId)
 
