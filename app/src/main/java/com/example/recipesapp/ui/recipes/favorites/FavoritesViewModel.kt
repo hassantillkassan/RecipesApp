@@ -94,16 +94,21 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     private fun getFavorites(): Set<Int> {
         val sharedPreferences =
             getApplication<Application>().getSharedPreferences(
-                Constants.SHARED_PREFS_NAME,
+                SHARED_PREFS_NAME,
                 Context.MODE_PRIVATE
             )
         val favoriteIdsStringSet =
-            sharedPreferences.getStringSet(Constants.FAVORITES_KEY, emptySet()) ?: emptySet()
+            sharedPreferences.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
 
         return favoriteIdsStringSet.mapNotNull { it.toIntOrNull() }.toSet()
     }
 
     fun clearError() {
         _state.postValue(_state.value?.copy(error = null))
+    }
+
+    companion object {
+        private const val SHARED_PREFS_NAME = "favorite_recipes_prefs"
+        private const val FAVORITES_KEY = "favorites_recipes"
     }
 }

@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-parcelize")
     alias(libs.plugins.safeargs)
-    id("com.google.devtools.ksp") version "1.9.0-1.0.13"
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -68,4 +68,5 @@ dependencies {
     implementation (libs.retrofit)
     implementation (libs.glide)
     implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
 }
