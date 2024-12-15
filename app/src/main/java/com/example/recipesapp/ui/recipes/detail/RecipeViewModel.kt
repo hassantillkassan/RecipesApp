@@ -70,17 +70,17 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun getFavorites(): MutableSet<String> {
         val sharedPrefs =
-            getApplication<Application>().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+            getApplication<Application>().getSharedPreferences(Constants.SHARED_PREFS_NAME, Context.MODE_PRIVATE)
         val favorites =
-            sharedPrefs.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
+            sharedPrefs.getStringSet(Constants.FAVORITES_KEY, emptySet()) ?: emptySet()
 
         return HashSet(favorites)
     }
 
     private fun saveFavorites(favorites: Set<String>) {
         val sharedPrefs =
-            getApplication<Application>().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
-        sharedPrefs.edit().putStringSet(FAVORITES_KEY, favorites).apply()
+            getApplication<Application>().getSharedPreferences(Constants.SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPrefs.edit().putStringSet(Constants.FAVORITES_KEY, favorites).apply()
     }
 
     fun onFavoritesClicked() {
@@ -104,11 +104,6 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
 
     fun clearError() {
         _state.postValue(_state.value?.copy(error = null))
-    }
-
-    companion object {
-        private const val SHARED_PREFS_NAME = "favorite_recipes_prefs"
-        private const val FAVORITES_KEY = "favorites_recipes"
     }
 
 }

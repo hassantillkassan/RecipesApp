@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.recipesapp.common.Constants
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -14,14 +15,39 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class RecipesRepository {
+class RecipesRepository(
+    private val apiService: RecipeApiService = createApiService(),
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+) {
 
     companion object {
         private const val CONNECTION_TIMEOUT = 10_000L
         private const val READ_TIMEOUT = 10_000L
+
+        private fun createApiService(): RecipeApiService {
+            val loggingInterceptor = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+
+
+            val okHttpClient = OkHttpClient.Builder()
+                .addInterceptor(loggingInterceptor)
+                .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS)
+                .build()
+
+
+            val retrofit = Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            return retrofit.create(RecipeApiService::class.java)
+        }
     }
 
-    private val apiService: RecipeApiService
+    /*private val apiService: RecipeApiService
 
     init {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -43,9 +69,9 @@ class RecipesRepository {
             .build()
 
         apiService = retrofit.create(RecipeApiService::class.java)
-    }
+    }*/
 
-    suspend fun getCategories(): List<Category>? = withContext(Dispatchers.IO) {
+    suspend fun getCategories(): List<Category>? = withContext(ioDispatcher) {
         try {
             apiService.getCategories()
         } catch (e: HttpException) {
@@ -57,7 +83,7 @@ class RecipesRepository {
         }
     }
 
-    suspend fun getRecipesByCategoryId(categoryId: Int): List<Recipe>? = withContext(Dispatchers.IO) {
+    suspend fun getRecipesByCategoryId(categoryId: Int): List<Recipe>? = withContext(ioDispatcher) {
         try {
             apiService.getRecipesByCategoryId(categoryId)
         } catch (e: HttpException) {
@@ -69,7 +95,7 @@ class RecipesRepository {
         }
     }
 
-    suspend fun getCategoryById(categoryId: Int): Category? = withContext(Dispatchers.IO) {
+    suspend fun getCategoryById(categoryId: Int): Category? = withContext(ioDispatcher) {
         try {
             apiService.getCategoryById(categoryId)
         } catch (e: HttpException) {
@@ -81,7 +107,7 @@ class RecipesRepository {
         }
     }
 
-    suspend fun getRecipesByIds(ids: Set<Int>): List<Recipe>? = withContext(Dispatchers.IO) {
+    suspend fun getRecipesByIds(ids: Set<Int>): List<Recipe>? = withContext(ioDispatcher) {
         try {
             val idsString = ids.joinToString(",")
             apiService.getRecipesByIds(idsString)
@@ -94,7 +120,7 @@ class RecipesRepository {
         }
     }
 
-    suspend fun getRecipeById(recipeId: Int): Recipe? = withContext(Dispatchers.IO) {
+    suspend fun getRecipeById(recipeId: Int): Recipe? = withContext(ioDispatcher) {
         try {
             apiService.getRecipeById(recipeId)
         } catch (e: HttpException) {

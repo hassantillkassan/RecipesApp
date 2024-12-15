@@ -157,8 +157,4 @@ class RecipeFragment : Fragment() {
         super.onDestroyView()
         _recipeBinding = null
     }
-
-    companion object {
-        const val ARG_RECIPE_ID = "recipe_id"
-    }
 }
