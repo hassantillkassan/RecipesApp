@@ -39,7 +39,8 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
                 val recipeImageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + recipe?.imageUrl
 
                 if (recipe != null) {
-                    val updatedRecipe = recipe.copy(imageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + recipe.imageUrl)
+                    val updatedRecipe =
+                        recipe.copy(imageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + recipe.imageUrl)
                     val isFavorite = favorites.contains(recipeId.toString())
 
                     _state.postValue(
@@ -70,7 +71,10 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun getFavorites(): MutableSet<String> {
         val sharedPrefs =
-            getApplication<Application>().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+            getApplication<Application>().getSharedPreferences(
+                SHARED_PREFS_NAME,
+                Context.MODE_PRIVATE
+            )
         val favorites =
             sharedPrefs.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
 
@@ -79,7 +83,10 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun saveFavorites(favorites: Set<String>) {
         val sharedPrefs =
-            getApplication<Application>().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+            getApplication<Application>().getSharedPreferences(
+                SHARED_PREFS_NAME,
+                Context.MODE_PRIVATE
+            )
         sharedPrefs.edit().putStringSet(FAVORITES_KEY, favorites).apply()
     }
 

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-parcelize")
     alias(libs.plugins.safeargs)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -66,4 +67,6 @@ dependencies {
     implementation(libs.okhttp3.logging.interceptor)
     implementation (libs.retrofit)
     implementation (libs.glide)
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
 }
