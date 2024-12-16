@@ -1,12 +1,16 @@
 package com.example.recipesapp.model
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+@Entity
 data class Category(
-    val id: Int,
-    val title: String,
-    val description: String,
-    val imageUrl: String,
+    @PrimaryKey val id: Int,
+    @ColumnInfo(name = "recipe_title") val title: String,
+    @ColumnInfo(name = "recipe_description") val description: String,
+    @ColumnInfo(name = "recipe_imageUrl") val imageUrl: String,
 ) : Parcelable

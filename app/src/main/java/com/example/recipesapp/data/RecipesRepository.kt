@@ -18,7 +18,10 @@ import java.util.concurrent.TimeUnit
 class RecipesRepository(
     private val apiService: RecipeApiService = createApiService(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    database: AppDatabase,
 ) {
+
+    private val categoriesDao: CategoriesDao = database.categoriesDao()
 
     companion object {
         private const val CONNECTION_TIMEOUT = 10_000L
@@ -47,29 +50,9 @@ class RecipesRepository(
         }
     }
 
-    /*private val apiService: RecipeApiService
-
-    init {
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-
-
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS)
-            .readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS)
-            .build()
-
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        apiService = retrofit.create(RecipeApiService::class.java)
-    }*/
+    suspend fun getCategoriesFromCache(): List<Category> = withContext(ioDispatcher) {
+        categoriesDao.getAllCategories()
+    }
 
     suspend fun getCategories(): List<Category>? = withContext(ioDispatcher) {
         try {
@@ -130,6 +113,10 @@ class RecipesRepository(
             Log.e("RecipesRepository", "IOException при получении рецепта по ID", e)
             null
         }
+    }
+
+    suspend fun saveCategoriesToCache(categories: List<Category>) = withContext(ioDispatcher) {
+        categoriesDao.addCategory(categories)
     }
 
 }
