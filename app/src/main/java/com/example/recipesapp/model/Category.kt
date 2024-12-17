@@ -12,5 +12,5 @@ data class Category(
     @PrimaryKey val id: Int,
     @ColumnInfo(name = "recipe_title") val title: String,
     @ColumnInfo(name = "recipe_description") val description: String,
-    @ColumnInfo(name = "recipe_imageUrl") val imageUrl: String,
+    @ColumnInfo(name = "recipe_image_url") val imageUrl: String,
 ) : Parcelable

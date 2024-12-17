@@ -33,29 +33,30 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
 
             val cachedCategories = recipesRepository.getCategoriesFromCache()
 
-            if (cachedCategories.isNotEmpty()) {
+            if (cachedCategories.isEmpty()) {
+                val networkCategories = recipesRepository.getCategories()
+
+                if (networkCategories != null) {
+                    recipesRepository.saveCategoriesToCache(networkCategories)
+
+                    val updatedCategories = networkCategories.map { category ->
+                        category.copy(imageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + category.imageUrl)
+                    }
+                    _state.value = _state.value?.copy(
+                        categories = updatedCategories,
+                        error = null,
+                    )
+                } else {
+                    _state.value = _state.value?.copy(
+                        error = ErrorType.DATA_FETCH_ERROR,
+                    )
+                }
+            } else {
                 val updatedCategories = cachedCategories.map { category ->
                     category.copy(imageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + category.imageUrl)
                 }
                 _state.value = _state.value?.copy(
-                    categories = updatedCategories,
-                )
-            }
-
-            val networkCategories = recipesRepository.getCategories()
-            if (networkCategories != null) {
-                recipesRepository.saveCategoriesToCache(networkCategories)
-
-                val updatedCategories = networkCategories.map { category ->
-                    category.copy(imageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + category.imageUrl)
-                }
-                _state.value = _state.value?.copy(
-                    categories = updatedCategories,
-                    error = null,
-                )
-            } else {
-                _state.value = _state.value?.copy(
-                    error = ErrorType.DATA_FETCH_ERROR,
+                    categories =  updatedCategories,
                 )
             }
         }
