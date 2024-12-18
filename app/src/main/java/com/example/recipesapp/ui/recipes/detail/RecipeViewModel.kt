@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.recipesapp.common.Constants
+import com.example.recipesapp.data.AppDatabase
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.model.Recipe
@@ -15,7 +16,9 @@ import kotlinx.coroutines.launch
 
 class RecipeViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val recipesRepository = RecipesRepository()
+    private val database = AppDatabase.getDatabase(application)
+
+    private val recipesRepository = RecipesRepository(database = database)
 
     private val _state = MutableLiveData(RecipeState())
     val state: LiveData<RecipeState>
@@ -72,11 +75,11 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
     private fun getFavorites(): MutableSet<String> {
         val sharedPrefs =
             getApplication<Application>().getSharedPreferences(
-                SHARED_PREFS_NAME,
+                Constants.SHARED_PREFS_NAME,
                 Context.MODE_PRIVATE
             )
         val favorites =
-            sharedPrefs.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
+            sharedPrefs.getStringSet(Constants.FAVORITES_KEY, emptySet()) ?: emptySet()
 
         return HashSet(favorites)
     }
@@ -84,10 +87,10 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
     private fun saveFavorites(favorites: Set<String>) {
         val sharedPrefs =
             getApplication<Application>().getSharedPreferences(
-                SHARED_PREFS_NAME,
+                Constants.SHARED_PREFS_NAME,
                 Context.MODE_PRIVATE
             )
-        sharedPrefs.edit().putStringSet(FAVORITES_KEY, favorites).apply()
+        sharedPrefs.edit().putStringSet(Constants.FAVORITES_KEY, favorites).apply()
     }
 
     fun onFavoritesClicked() {
@@ -112,10 +115,4 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
     fun clearError() {
         _state.postValue(_state.value?.copy(error = null))
     }
-
-    companion object {
-        private const val SHARED_PREFS_NAME = "favorite_recipes_prefs"
-        private const val FAVORITES_KEY = "favorites_recipes"
-    }
-
 }

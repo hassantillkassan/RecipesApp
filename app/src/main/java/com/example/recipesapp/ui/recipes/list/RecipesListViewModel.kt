@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.recipesapp.common.Constants
+import com.example.recipesapp.data.AppDatabase
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.ErrorType
@@ -15,7 +16,9 @@ import kotlinx.coroutines.launch
 
 class RecipesListViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val recipesRepository = RecipesRepository()
+    private val database = AppDatabase.getDatabase(application)
+
+    private val recipesRepository = RecipesRepository(database = database)
 
     private val _state = MutableLiveData(RecipesListState())
     val state: LiveData<RecipesListState>

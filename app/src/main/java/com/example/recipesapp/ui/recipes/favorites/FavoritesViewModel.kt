@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.recipesapp.common.Constants
+import com.example.recipesapp.data.AppDatabase
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.model.Recipe
@@ -15,7 +16,9 @@ import kotlinx.coroutines.launch
 
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val recipesRepository = RecipesRepository()
+    private val database = AppDatabase.getDatabase(application)
+
+    private val recipesRepository = RecipesRepository(database = database)
 
     private val _state = MutableLiveData(FavoritesState())
     val state: LiveData<FavoritesState>
@@ -94,21 +97,16 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     private fun getFavorites(): Set<Int> {
         val sharedPreferences =
             getApplication<Application>().getSharedPreferences(
-                SHARED_PREFS_NAME,
+                Constants.SHARED_PREFS_NAME,
                 Context.MODE_PRIVATE
             )
         val favoriteIdsStringSet =
-            sharedPreferences.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
+            sharedPreferences.getStringSet(Constants.FAVORITES_KEY, emptySet()) ?: emptySet()
 
         return favoriteIdsStringSet.mapNotNull { it.toIntOrNull() }.toSet()
     }
 
     fun clearError() {
         _state.postValue(_state.value?.copy(error = null))
-    }
-
-    companion object {
-        private const val SHARED_PREFS_NAME = "favorite_recipes_prefs"
-        private const val FAVORITES_KEY = "favorites_recipes"
     }
 }
