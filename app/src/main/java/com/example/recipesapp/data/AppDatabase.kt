@@ -4,12 +4,19 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
+import com.example.recipesapp.common.Converters
 import com.example.recipesapp.model.Category
+import com.example.recipesapp.model.Recipe
 
-@Database(entities = [Category::class], version = 1, exportSchema = false)
+@Database(entities = [Category::class, Recipe::class], version = 1, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun categoriesDao() : CategoriesDao
+
+    abstract fun recipesDao(): RecipesDao
 
     companion object {
         @Volatile
@@ -21,7 +28,10 @@ abstract class AppDatabase: RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "recipes_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+
                 instance = newInstance
                 newInstance
             }
