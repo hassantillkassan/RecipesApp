@@ -22,6 +22,7 @@ class RecipesRepository(
 ) {
 
     private val categoriesDao: CategoriesDao = database.categoriesDao()
+    private val recipesDao: RecipesDao = database.recipesDao()
 
     companion object {
         private const val CONNECTION_TIMEOUT = 10_000L
@@ -66,18 +67,6 @@ class RecipesRepository(
         }
     }
 
-    suspend fun getRecipesByCategoryId(categoryId: Int): List<Recipe>? = withContext(ioDispatcher) {
-        try {
-            apiService.getRecipesByCategoryId(categoryId)
-        } catch (e: HttpException) {
-            Log.e("RecipesRepository", "HTTP ошибка ${e.code()} - ${e.message()}", e)
-            null
-        } catch (e: IOException) {
-            Log.e("RecipesRepository", "IOException при получении рецептов по ID категории", e)
-            null
-        }
-    }
-
     suspend fun getCategoryById(categoryId: Int): Category? = withContext(ioDispatcher) {
         try {
             apiService.getCategoryById(categoryId)
@@ -86,6 +75,32 @@ class RecipesRepository(
             null
         } catch (e: IOException) {
             Log.e("RecipesRepository", "IOException при получении категории по ID", e)
+            null
+        }
+    }
+
+    suspend fun saveCategoriesToCache(categories: List<Category>) = withContext(ioDispatcher) {
+        categoriesDao.addCategory(categories)
+    }
+
+    suspend fun getRecipesFromCache(categoryId: Int): List<Recipe> = withContext(ioDispatcher) {
+        recipesDao.getRecipesByCategoryId(categoryId)
+    }
+
+    suspend fun getAllCachedRecipes(): List<Recipe> = withContext(ioDispatcher) {
+        recipesDao.getAllRecipes()
+    }
+
+    suspend fun getRecipesByCategoryId(categoryId: Int): List<Recipe>? = withContext(ioDispatcher) {
+        try {
+            val response = apiService.getRecipesByCategoryId(categoryId)
+            Log.d("RecipesRepository", "Received recipes: $response")
+            response
+        } catch (e: HttpException) {
+            Log.e("RecipesRepository", "HTTP ошибка ${e.code()} - ${e.message()}", e)
+            null
+        } catch (e: IOException) {
+            Log.e("RecipesRepository", "IOException при получении рецептов по ID категории", e)
             null
         }
     }
@@ -115,8 +130,12 @@ class RecipesRepository(
         }
     }
 
-    suspend fun saveCategoriesToCache(categories: List<Category>) = withContext(ioDispatcher) {
-        categoriesDao.addCategory(categories)
+    suspend fun saveRecipesToCache(recipes: List<Recipe>) = withContext(ioDispatcher) {
+        Log.d("RecipesRepository", "Saving ${recipes.size} recipes to cache")
+        recipes.forEach { recipe ->
+            Log.d("RecipesRepository", "Recipe ID: ${recipe.id}, Category ID: ${recipe.categoryId}")
+        }
+        recipesDao.addRecipes(recipes)
     }
 
 }

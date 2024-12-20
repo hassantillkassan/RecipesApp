@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 @Entity
 data class Category(
     @PrimaryKey val id: Int,
-    @ColumnInfo(name = "recipe_title") val title: String,
-    @ColumnInfo(name = "recipe_description") val description: String,
-    @ColumnInfo(name = "recipe_image_url") val imageUrl: String,
+    @ColumnInfo(name = "category_title") val title: String,
+    @ColumnInfo(name = "category_description") val description: String,
+    @ColumnInfo(name = "category_image_url") val imageUrl: String,
 ) : Parcelable
