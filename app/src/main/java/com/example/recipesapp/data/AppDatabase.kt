@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import com.example.recipesapp.common.Constants
 import com.example.recipesapp.common.Converters
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
@@ -27,7 +28,7 @@ abstract class AppDatabase: RoomDatabase() {
                 val newInstance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "recipes_database"
+                    Constants.RECIPES_DATABASE_NAME
                 )
                     .fallbackToDestructiveMigration()
                     .build()

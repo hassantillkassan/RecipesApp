@@ -42,6 +42,28 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
 
         viewModelScope.launch {
             try {
+                val favoriteRecipes = recipesRepository.getFavoriteRecipes()
+
+                _state.postValue(
+                    _state.value?.copy(
+                        recipes = favoriteRecipes,
+                        isEmpty = favoriteRecipes.isEmpty(),
+                        isLoading = false,
+                        error = null,
+                    )
+                )
+            } catch (e: Exception) {
+                Log.e("FavoritesViewModel", "Ошибка при загрузке избранных рецептов", e)
+                _state.postValue(
+                    _state.value?.copy(
+                        isEmpty = false,
+                        isLoading = false,
+                        error = ErrorType.UNKNOWN_ERROR,
+                    )
+                )
+            }
+
+            /*try {
                 val favoritesIds = getFavorites()
 
                 if (favoritesIds.isEmpty()) {
@@ -90,7 +112,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
                         error = ErrorType.UNKNOWN_ERROR,
                     )
                 )
-            }
+            }*/
         }
     }
 

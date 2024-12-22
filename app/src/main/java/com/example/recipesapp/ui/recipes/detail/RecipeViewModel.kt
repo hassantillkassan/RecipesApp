@@ -37,6 +37,39 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val recipe = recipesRepository.getRecipeById(recipeId)
 
+                val favorites = getFavorites().toMutableSet()
+                val isFavorite = favorites.contains(recipeId.toString())
+
+                val recipeImageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + recipe?.imageUrl
+
+                if (recipe != null) {
+                    _state.postValue(
+                        _state.value?.copy(
+                            recipe = recipe.copy(isFavorite = isFavorite),
+                            isFavorite = isFavorite,
+                            recipeImage = recipeImageUrl,
+                            error = null,
+                        )
+                    )
+                } else {
+                    _state.postValue(
+                        _state.value?.copy(
+                            error = ErrorType.DATA_FETCH_ERROR,
+                        )
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("RecipeViewModel", "Ошибка при загрузке рецепта", e)
+                _state.postValue(
+                    _state.value?.copy(
+                        error = ErrorType.UNKNOWN_ERROR,
+                    )
+                )
+            }
+
+            /*try {
+                val recipe = recipesRepository.getRecipeById(recipeId)
+
                 val favorites = getFavorites()
 
                 val recipeImageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + recipe?.imageUrl
@@ -68,7 +101,7 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
                         error = ErrorType.UNKNOWN_ERROR,
                     )
                 )
-            }
+            }*/
         }
     }
 
@@ -106,6 +139,10 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
 
         saveFavorites(favorites)
         _state.value = _state.value?.copy(isFavorite = !isCurrentlyFavorite)
+
+        viewModelScope.launch {
+            recipesRepository.updateRecipeFavoriteStatus(recipeId, !isCurrentlyFavorite)
+        }
     }
 
     fun updatePortionCount(portionCount: Int) {

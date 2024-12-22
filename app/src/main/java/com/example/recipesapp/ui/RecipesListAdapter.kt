@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipesapp.R
+import com.example.recipesapp.common.Constants
 import com.example.recipesapp.common.loadImage
 import com.example.recipesapp.databinding.ItemRecipeBinding
 import com.example.recipesapp.model.Recipe
@@ -33,7 +34,7 @@ class RecipesListAdapter(
         with(viewHolder.binding) {
             tvTitle.text = recipe.title
 
-            ivRecipeImage.loadImage(recipe.imageUrl)
+            ivRecipeImage.loadImage(recipe.updatedImageUrl)
 
             ivRecipeImage.contentDescription = root.context.getString(
                 R.string.text_recipe_image_description,

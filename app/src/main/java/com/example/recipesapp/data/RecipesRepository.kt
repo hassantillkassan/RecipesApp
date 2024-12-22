@@ -83,10 +83,6 @@ class RecipesRepository(
         categoriesDao.addCategory(categories)
     }
 
-    suspend fun getRecipesFromCache(categoryId: Int): List<Recipe> = withContext(ioDispatcher) {
-        recipesDao.getRecipesByCategoryId(categoryId)
-    }
-
     suspend fun getAllCachedRecipes(): List<Recipe> = withContext(ioDispatcher) {
         recipesDao.getAllRecipes()
     }
@@ -136,6 +132,14 @@ class RecipesRepository(
             Log.d("RecipesRepository", "Recipe ID: ${recipe.id}, Category ID: ${recipe.categoryId}")
         }
         recipesDao.addRecipes(recipes)
+    }
+
+    suspend fun getFavoriteRecipes(): List<Recipe> = withContext(ioDispatcher) {
+        recipesDao.getFavoriteRecipes()
+    }
+
+    suspend fun updateRecipeFavoriteStatus(recipeId: Int, isFavorite: Boolean) = withContext(ioDispatcher) {
+        recipesDao.updateRecipeFavoriteStatus(recipeId, isFavorite)
     }
 
 }
