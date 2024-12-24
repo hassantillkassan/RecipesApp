@@ -45,7 +45,6 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
                     val networkRecipesWithCategory = networkRecipes.map { recipe ->
                         recipe.copy(
                             categoryId = category.id,
-                            imageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + recipe.imageUrl,
                         )
                     }
 
@@ -70,43 +69,6 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
                     error = null,
                 )
             }
-
-            /*_state.value = _state.value?.copy(error = null)
-
-            val cachedRecipes = recipesRepository.getAllCachedRecipes()
-            val filteredRecipes = cachedRecipes.filter { it.categoryId == category.id }
-
-            if (filteredRecipes.isEmpty()) {
-                val networkRecipes = recipesRepository.getRecipesByCategoryId(category.id)
-
-                if (networkRecipes != null) {
-                    recipesRepository.saveRecipesToCache(networkRecipes)
-
-                    _state.value = _state.value?.copy(
-                        recipes = networkRecipes.map { recipe ->
-                            recipe.copy(imageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + recipe.imageUrl)
-                        },
-                        categoryName = category.title,
-                        categoryImage = category.imageUrl,
-                        error = null,
-                    )
-                } else {
-                    _state.value = _state.value?.copy(
-                        error = ErrorType.DATA_FETCH_ERROR,
-                    )
-                }
-            } else {
-                val updatedCachedRecipes = filteredRecipes.map { recipe ->
-                    recipe.copy(imageUrl = Constants.BASE_URL + Constants.IMAGES_PATH + recipe.imageUrl)
-                }
-
-                _state.value = _state.value?.copy(
-                    recipes = updatedCachedRecipes,
-                    categoryName = category.title,
-                    categoryImage = category.imageUrl,
-                    error = null,
-                )
-            }*/
         }
     }
 

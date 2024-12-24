@@ -5,4 +5,5 @@ object Constants {
     const val IMAGES_PATH = "images/"
     const val SHARED_PREFS_NAME = "favorite_recipes_prefs"
     const val FAVORITES_KEY = "favorites_recipes"
+    const val RECIPES_DATABASE_NAME = "recipes_database"
 }
