@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.viewModels
 import com.example.recipesapp.R
+import com.example.recipesapp.RecipeApplication
 import com.example.recipesapp.databinding.FragmentListCategoriesBinding
+import com.example.recipesapp.di.AppContainer
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.CategoriesListAdapter
 import com.example.recipesapp.ui.OnNavigationListener
@@ -27,8 +28,15 @@ class CategoriesListFragment : Fragment() {
             )
     }
 
-    private val viewModel: CategoriesListViewModel by viewModels()
+    private lateinit var categoriesListViewModel: CategoriesListViewModel
     private var categoriesAdapter: CategoriesListAdapter? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val appContainer: AppContainer = (requireActivity().application as RecipeApplication).appContainer
+        categoriesListViewModel = appContainer.categoriesListViewModelFactory.create()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +51,7 @@ class CategoriesListFragment : Fragment() {
 
         initRecycler()
 
-        viewModel.state.observe(viewLifecycleOwner) { state ->
+        categoriesListViewModel.state.observe(viewLifecycleOwner) { state ->
             categoriesAdapter?.updateData(state.categories)
 
             state.error?.let { error ->
@@ -57,11 +65,11 @@ class CategoriesListFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                viewModel.clearError()
+                categoriesListViewModel.clearError()
             }
         }
 
-        viewModel.loadCategories()
+        categoriesListViewModel.loadCategories()
     }
 
     private fun initRecycler() {
@@ -72,7 +80,7 @@ class CategoriesListFragment : Fragment() {
     }
 
     private fun openRecipesByCategoryId(categoryId: Int) {
-        val categoriesState = viewModel.state.value
+        val categoriesState = categoriesListViewModel.state.value
         val selectedCategory = categoriesState?.categories?.find { it.id == categoryId }
 
         if (selectedCategory != null) {
