@@ -6,12 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
+import com.example.recipesapp.RecipeApplication
 import com.example.recipesapp.common.loadImage
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
+import com.example.recipesapp.di.AppContainer
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.OnNavigationListener
 import com.example.recipesapp.ui.RecipesListAdapter
@@ -30,11 +31,18 @@ class RecipesListFragment : Fragment() {
             )
     }
 
-    private val viewModel: RecipesListViewModel by viewModels()
+    private lateinit var recipesListViewModel: RecipesListViewModel
 
     private var recipesAdapter: RecipesListAdapter? = null
 
     private val args: RecipesListFragmentArgs by navArgs()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val appContainer: AppContainer = (requireActivity().application as RecipeApplication).appContainer
+        recipesListViewModel = appContainer.recipesListViewModelFactory.create()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +56,7 @@ class RecipesListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val category = args.category
-        viewModel.loadRecipe(category)
+        recipesListViewModel.loadRecipe(category)
 
         recipesAdapter = RecipesListAdapter(emptyList()) { recipe ->
             navigationListener.navigateToRecipe(recipe)
@@ -59,7 +67,7 @@ class RecipesListFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
         }
 
-        viewModel.state.observe(viewLifecycleOwner) { state ->
+        recipesListViewModel.state.observe(viewLifecycleOwner) { state ->
             recipesBinding.tvCategoryName.text = state.categoryName
 
             state.categoryImage?.let { imageUrl ->
@@ -84,7 +92,7 @@ class RecipesListFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                viewModel.clearError()
+                recipesListViewModel.clearError()
             }
         }
 

@@ -6,10 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
+import com.example.recipesapp.RecipeApplication
 import com.example.recipesapp.databinding.FragmentFavoritesBinding
+import com.example.recipesapp.di.AppContainer
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.OnNavigationListener
 import com.example.recipesapp.ui.RecipesListAdapter
@@ -21,8 +22,17 @@ class FavoritesFragment : Fragment() {
         get() = _favoritesBinding
             ?: throw IllegalStateException("Binding for FragmentFavoritesBinding must not be null")
 
+
+    private lateinit var favoritesViewModel: FavoritesViewModel
+
     private var recipesAdapter: RecipesListAdapter? = null
-    private val viewModel: FavoritesViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val appContainer: AppContainer = (requireActivity().application as RecipeApplication).appContainer
+        favoritesViewModel = appContainer.favoritesViewModelFactory.create()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,7 +47,7 @@ class FavoritesFragment : Fragment() {
 
         initializeRecyclerView()
 
-        viewModel.state.observe(viewLifecycleOwner) { state ->
+        favoritesViewModel.state.observe(viewLifecycleOwner) { state ->
             recipesAdapter?.updateData(state.recipes)
 
             when {
@@ -65,7 +75,7 @@ class FavoritesFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    viewModel.clearError()
+                    favoritesViewModel.clearError()
                 }
 
                 else -> {
@@ -75,7 +85,7 @@ class FavoritesFragment : Fragment() {
             }
         }
 
-        viewModel.loadFavorites()
+        favoritesViewModel.loadFavorites()
     }
 
     private fun initializeRecyclerView() {
@@ -90,7 +100,7 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun openRecipeByRecipeId(recipeId: Int) {
-        val favoritesState = viewModel.state.value
+        val favoritesState = favoritesViewModel.state.value
         val selectedRecipe = favoritesState?.recipes?.find { it.id == recipeId }
 
         if (selectedRecipe != null) {

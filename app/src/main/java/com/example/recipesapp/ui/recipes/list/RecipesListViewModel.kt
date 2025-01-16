@@ -1,24 +1,18 @@
 package com.example.recipesapp.ui.recipes.list
 
-import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.recipesapp.common.Constants
-import com.example.recipesapp.data.AppDatabase
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.model.Recipe
 import kotlinx.coroutines.launch
 
-class RecipesListViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val database = AppDatabase.getDatabase(application)
-
-    private val recipesRepository = RecipesRepository(database = database)
+class RecipesListViewModel(
+    private val recipesRepository: RecipesRepository,
+) : ViewModel() {
 
     private val _state = MutableLiveData(RecipesListState())
     val state: LiveData<RecipesListState>

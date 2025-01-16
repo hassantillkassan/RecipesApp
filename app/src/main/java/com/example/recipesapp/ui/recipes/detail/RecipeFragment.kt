@@ -9,12 +9,13 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
+import com.example.recipesapp.RecipeApplication
 import com.example.recipesapp.common.loadImage
 import com.example.recipesapp.databinding.FragmentRecipeBinding
+import com.example.recipesapp.di.AppContainer
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.IngredientsAdapter
 import com.example.recipesapp.ui.MethodAdapter
@@ -28,7 +29,7 @@ class RecipeFragment : Fragment() {
         get() = _recipeBinding
             ?: throw IllegalStateException("Binding for FragmentRecipeBinding must not be null")
 
-    private val viewModel: RecipeViewModel by viewModels()
+    private lateinit var recipeViewModel: RecipeViewModel
 
     private val args: RecipeFragmentArgs by navArgs()
 
@@ -54,7 +55,10 @@ class RecipeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.loadRecipe(args.recipeId)
+        val appContainer: AppContainer = (requireActivity().application as RecipeApplication).appContainer
+        recipeViewModel = appContainer.recipeViewModelFactory.create()
+
+        recipeViewModel.loadRecipe(args.recipeId)
     }
 
     override fun onCreateView(
@@ -69,7 +73,7 @@ class RecipeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         recipeBinding.btnFavorite.setOnClickListener {
-            viewModel.onFavoritesClicked()
+            recipeViewModel.onFavoritesClicked()
         }
 
         initUI()
@@ -102,11 +106,11 @@ class RecipeFragment : Fragment() {
 
         recipeBinding.seekBarPortions.setOnSeekBarChangeListener(
             PortionSeekBarListener { progress ->
-                viewModel.updatePortionCount(progress)
+                recipeViewModel.updatePortionCount(progress)
             }
         )
 
-        viewModel.state.observe(viewLifecycleOwner) { state ->
+        recipeViewModel.state.observe(viewLifecycleOwner) { state ->
             state.recipe?.let { recipe ->
                 recipeBinding.tvRecipe.text = recipe.title
 
@@ -141,7 +145,7 @@ class RecipeFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                viewModel.clearError()
+                recipeViewModel.clearError()
             }
         }
     }

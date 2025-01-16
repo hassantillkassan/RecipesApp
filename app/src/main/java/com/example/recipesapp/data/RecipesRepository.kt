@@ -1,55 +1,20 @@
 package com.example.recipesapp.data
 
 import android.util.Log
-import com.example.recipesapp.common.Constants
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.HttpException
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 
 class RecipesRepository(
-    private val apiService: RecipeApiService = createApiService(),
+    private val recipesDao: RecipesDao,
+    private val categoriesDao: CategoriesDao,
+    private val recipeApiService: RecipeApiService,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    database: AppDatabase,
 ) {
-
-    private val categoriesDao: CategoriesDao = database.categoriesDao()
-    private val recipesDao: RecipesDao = database.recipesDao()
-
-    companion object {
-        private const val CONNECTION_TIMEOUT = 10_000L
-        private const val READ_TIMEOUT = 10_000L
-
-        private fun createApiService(): RecipeApiService {
-            val loggingInterceptor = HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            }
-
-
-            val okHttpClient = OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor)
-                .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS)
-                .readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS)
-                .build()
-
-
-            val retrofit = Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-            return retrofit.create(RecipeApiService::class.java)
-        }
-    }
 
     suspend fun getCategoriesFromCache(): List<Category> = withContext(ioDispatcher) {
         categoriesDao.getAllCategories()
@@ -57,7 +22,7 @@ class RecipesRepository(
 
     suspend fun getCategories(): List<Category>? = withContext(ioDispatcher) {
         try {
-            apiService.getCategories()
+            recipeApiService.getCategories()
         } catch (e: HttpException) {
             Log.e("RecipesRepository", "HTTP ошибка ${e.code()} - ${e.message()}", e)
             null
@@ -69,7 +34,7 @@ class RecipesRepository(
 
     suspend fun getCategoryById(categoryId: Int): Category? = withContext(ioDispatcher) {
         try {
-            apiService.getCategoryById(categoryId)
+            recipeApiService.getCategoryById(categoryId)
         } catch (e: HttpException) {
             Log.e("RecipesRepository", "HTTP ошибка ${e.code()} - ${e.message()}", e)
             null
@@ -89,7 +54,7 @@ class RecipesRepository(
 
     suspend fun getRecipesByCategoryId(categoryId: Int): List<Recipe>? = withContext(ioDispatcher) {
         try {
-            val response = apiService.getRecipesByCategoryId(categoryId)
+            val response = recipeApiService.getRecipesByCategoryId(categoryId)
             Log.d("RecipesRepository", "Received recipes: $response")
             response
         } catch (e: HttpException) {
@@ -104,7 +69,7 @@ class RecipesRepository(
     suspend fun getRecipesByIds(ids: Set<Int>): List<Recipe>? = withContext(ioDispatcher) {
         try {
             val idsString = ids.joinToString(",")
-            apiService.getRecipesByIds(idsString)
+            recipeApiService.getRecipesByIds(idsString)
         } catch (e: HttpException) {
             Log.e("RecipesRepository", "HTTP ошибка ${e.code()} - ${e.message()}", e)
             null
@@ -116,7 +81,7 @@ class RecipesRepository(
 
     suspend fun getRecipeById(recipeId: Int): Recipe? = withContext(ioDispatcher) {
         try {
-            apiService.getRecipeById(recipeId)
+            recipeApiService.getRecipeById(recipeId)
         } catch (e: HttpException) {
             Log.e("RecipesRepository", "HTTP ошибка ${e.code()} - ${e.message()}", e)
             null
