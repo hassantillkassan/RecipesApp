@@ -6,17 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
-import com.example.recipesapp.RecipeApplication
 import com.example.recipesapp.common.loadImage
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
-import com.example.recipesapp.di.AppContainer
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.OnNavigationListener
 import com.example.recipesapp.ui.RecipesListAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RecipesListFragment : Fragment() {
 
     private var _recipesBinding: FragmentListRecipesBinding? = null
@@ -31,7 +32,7 @@ class RecipesListFragment : Fragment() {
             )
     }
 
-    private lateinit var recipesListViewModel: RecipesListViewModel
+    private val recipesListViewModel: RecipesListViewModel by viewModels()
 
     private var recipesAdapter: RecipesListAdapter? = null
 
@@ -40,8 +41,8 @@ class RecipesListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val appContainer: AppContainer = (requireActivity().application as RecipeApplication).appContainer
-        recipesListViewModel = appContainer.recipesListViewModelFactory.create()
+//        val appContainer: AppContainer = (requireActivity().application as RecipeApplication).appContainer
+//        recipesListViewModel = appContainer.recipesListViewModelFactory.create()
     }
 
     override fun onCreateView(

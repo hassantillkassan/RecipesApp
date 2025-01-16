@@ -1,14 +1,7 @@
 package com.example.recipesapp
 
 import android.app.Application
-import com.example.recipesapp.di.AppContainer
+import dagger.hilt.android.HiltAndroidApp
 
-class RecipeApplication: Application() {
-
-    lateinit var appContainer: AppContainer
-
-    override fun onCreate() {
-        super.onCreate()
-        appContainer = AppContainer(this)
-    }
-}
+@HiltAndroidApp
+class RecipeApplication: Application()

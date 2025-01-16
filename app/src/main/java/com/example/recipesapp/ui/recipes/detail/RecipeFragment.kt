@@ -1,6 +1,7 @@
 package com.example.recipesapp.ui.recipes.detail
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,19 +10,20 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
-import com.example.recipesapp.RecipeApplication
 import com.example.recipesapp.common.loadImage
 import com.example.recipesapp.databinding.FragmentRecipeBinding
-import com.example.recipesapp.di.AppContainer
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.IngredientsAdapter
 import com.example.recipesapp.ui.MethodAdapter
 import com.google.android.material.divider.MaterialDividerItemDecoration
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class RecipeFragment : Fragment() {
 
     private var _recipeBinding: FragmentRecipeBinding? = null
@@ -29,7 +31,7 @@ class RecipeFragment : Fragment() {
         get() = _recipeBinding
             ?: throw IllegalStateException("Binding for FragmentRecipeBinding must not be null")
 
-    private lateinit var recipeViewModel: RecipeViewModel
+    private val recipeViewModel: RecipeViewModel by viewModels()
 
     private val args: RecipeFragmentArgs by navArgs()
 
@@ -55,8 +57,8 @@ class RecipeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val appContainer: AppContainer = (requireActivity().application as RecipeApplication).appContainer
-        recipeViewModel = appContainer.recipeViewModelFactory.create()
+//        val appContainer: AppContainer = (requireActivity().application as RecipeApplication).appContainer
+//        recipeViewModel = appContainer.recipeViewModelFactory.create()
 
         recipeViewModel.loadRecipe(args.recipeId)
     }
@@ -112,6 +114,7 @@ class RecipeFragment : Fragment() {
 
         recipeViewModel.state.observe(viewLifecycleOwner) { state ->
             state.recipe?.let { recipe ->
+                Log.d("RecipeFragment", "Обновление UI: ID = ${recipe.id}, Избранное = ${state.isFavorite}")
                 recipeBinding.tvRecipe.text = recipe.title
 
                 state.recipeImage?.let { imageUrl ->
@@ -135,6 +138,7 @@ class RecipeFragment : Fragment() {
             }
 
             state.error?.let { error ->
+                Log.e("RecipeFragment", "Ошибка: $error")
                 val errorMessage = when (error) {
                     ErrorType.DATA_FETCH_ERROR -> getString(R.string.error_data_fetch)
                     ErrorType.UNKNOWN_ERROR -> getString(R.string.error_unknown)
@@ -151,6 +155,7 @@ class RecipeFragment : Fragment() {
     }
 
     private fun updateFavoriteIcon(isFavorite: Boolean) {
+        Log.d("RecipeFragment", "Обновление иконки избранного: Избранное = $isFavorite")
         if (isFavorite)
             recipeBinding.btnFavorite.setImageResource(R.drawable.ic_heart_filled)
         else
