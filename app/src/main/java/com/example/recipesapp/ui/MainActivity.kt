@@ -16,6 +16,7 @@ import com.example.recipesapp.ui.recipes.favorites.FavoritesFragmentDirections
 import com.example.recipesapp.ui.recipes.list.RecipesListFragmentDirections
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
@@ -24,6 +25,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnNavigationListener {
 
     companion object {

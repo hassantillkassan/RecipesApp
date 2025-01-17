@@ -1,20 +1,22 @@
 package com.example.recipesapp.ui.recipes.favorites
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
-import com.example.recipesapp.RecipeApplication
 import com.example.recipesapp.databinding.FragmentFavoritesBinding
-import com.example.recipesapp.di.AppContainer
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.OnNavigationListener
 import com.example.recipesapp.ui.RecipesListAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FavoritesFragment : Fragment() {
 
     private var _favoritesBinding: FragmentFavoritesBinding? = null
@@ -23,16 +25,9 @@ class FavoritesFragment : Fragment() {
             ?: throw IllegalStateException("Binding for FragmentFavoritesBinding must not be null")
 
 
-    private lateinit var favoritesViewModel: FavoritesViewModel
+    private val favoritesViewModel: FavoritesViewModel by viewModels()
 
     private var recipesAdapter: RecipesListAdapter? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val appContainer: AppContainer = (requireActivity().application as RecipeApplication).appContainer
-        favoritesViewModel = appContainer.favoritesViewModelFactory.create()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -104,8 +99,10 @@ class FavoritesFragment : Fragment() {
         val selectedRecipe = favoritesState?.recipes?.find { it.id == recipeId }
 
         if (selectedRecipe != null) {
+            Log.d("FavoritesFragment", "Переход на рецепт: ID = ${selectedRecipe.id}, Избранное = ${selectedRecipe.isFavorite}")
             (activity as? OnNavigationListener)?.navigateToRecipe(selectedRecipe)
         } else {
+            Log.e("FavoritesFragment", "Рецепт с ID = $recipeId не найден")
             Toast.makeText(
                 context,
                 getString(R.string.warning_recipe_not_found),

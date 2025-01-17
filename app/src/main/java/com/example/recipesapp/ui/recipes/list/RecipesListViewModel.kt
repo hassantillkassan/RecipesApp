@@ -8,9 +8,12 @@ import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.model.Recipe
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RecipesListViewModel(
+@HiltViewModel
+class RecipesListViewModel @Inject constructor(
     private val recipesRepository: RecipesRepository,
 ) : ViewModel() {
 

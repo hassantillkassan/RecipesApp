@@ -7,9 +7,12 @@ import com.example.recipesapp.common.Constants
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.ErrorType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CategoriesListViewModel(
+@HiltViewModel
+class CategoriesListViewModel @Inject constructor(
     private val recipesRepository: RecipesRepository,
 ) : ViewModel() {
 

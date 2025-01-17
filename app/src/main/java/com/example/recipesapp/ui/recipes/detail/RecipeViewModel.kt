@@ -8,9 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.model.Recipe
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RecipeViewModel(
+@HiltViewModel
+class RecipeViewModel @Inject constructor(
     private val recipesRepository: RecipesRepository,
 ) : ViewModel() {
 
@@ -27,9 +30,11 @@ class RecipeViewModel(
     )
 
     fun loadRecipe(recipeId: Int) {
+        Log.d("RecipeViewModel", "Загрузка рецепта: ID = $recipeId")
         viewModelScope.launch {
             try {
                 val recipe = recipesRepository.getRecipeById(recipeId)
+                Log.d("RecipeViewModel", "Рецепт загружен: ID = ${recipe?.id}, Избранное = ${recipe?.isFavorite}")
 
                 if (recipe != null) {
                     _state.postValue(

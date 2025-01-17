@@ -8,9 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.model.Recipe
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FavoritesViewModel(
+@HiltViewModel
+class FavoritesViewModel @Inject constructor(
     private val recipesRepository: RecipesRepository,
 ) : ViewModel() {
 

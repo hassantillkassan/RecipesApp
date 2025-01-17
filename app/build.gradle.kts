@@ -4,6 +4,7 @@ plugins {
     id("kotlin-parcelize")
     alias(libs.plugins.safeargs)
     alias(libs.plugins.ksp)
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -69,4 +70,6 @@ dependencies {
     implementation (libs.glide)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.android)
 }

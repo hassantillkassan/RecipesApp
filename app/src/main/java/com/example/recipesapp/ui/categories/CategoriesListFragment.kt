@@ -6,14 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import com.example.recipesapp.R
-import com.example.recipesapp.RecipeApplication
 import com.example.recipesapp.databinding.FragmentListCategoriesBinding
-import com.example.recipesapp.di.AppContainer
 import com.example.recipesapp.model.ErrorType
 import com.example.recipesapp.ui.CategoriesListAdapter
 import com.example.recipesapp.ui.OnNavigationListener
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CategoriesListFragment : Fragment() {
 
     private var _categoriesBinding: FragmentListCategoriesBinding? = null
@@ -28,14 +29,12 @@ class CategoriesListFragment : Fragment() {
             )
     }
 
-    private lateinit var categoriesListViewModel: CategoriesListViewModel
+    private val categoriesListViewModel: CategoriesListViewModel by viewModels()
+
     private var categoriesAdapter: CategoriesListAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val appContainer: AppContainer = (requireActivity().application as RecipeApplication).appContainer
-        categoriesListViewModel = appContainer.categoriesListViewModelFactory.create()
     }
 
     override fun onCreateView(
