@@ -57,9 +57,6 @@ class RecipeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        val appContainer: AppContainer = (requireActivity().application as RecipeApplication).appContainer
-//        recipeViewModel = appContainer.recipeViewModelFactory.create()
-
         recipeViewModel.loadRecipe(args.recipeId)
     }
 

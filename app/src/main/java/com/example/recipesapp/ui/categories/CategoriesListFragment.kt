@@ -35,9 +35,6 @@ class CategoriesListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        val appContainer: AppContainer = (requireActivity().application as RecipeApplication).appContainer
-//        categoriesListViewModel = appContainer.categoriesListViewModelFactory.create()
     }
 
     override fun onCreateView(

@@ -4,19 +4,18 @@ import android.util.Log
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Named
 
 class RecipesRepository @Inject constructor(
     private val recipesDao: RecipesDao,
     private val categoriesDao: CategoriesDao,
     private val recipeApiService: RecipeApiService,
+    @Named("IO") private val ioDispatcher: CoroutineDispatcher,
 ) {
-
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     suspend fun getCategoriesFromCache(): List<Category> = withContext(ioDispatcher) {
         categoriesDao.getAllCategories()
@@ -83,7 +82,12 @@ class RecipesRepository @Inject constructor(
 
     suspend fun getRecipeById(recipeId: Int): Recipe? = withContext(ioDispatcher) {
         try {
-            recipeApiService.getRecipeById(recipeId)
+            val recipeFromApi = recipeApiService.getRecipeById(recipeId)
+
+            val recipeFromDb = recipesDao.getRecipeById(recipeId)
+            val isFavorite = recipeFromDb?.isFavorite ?: false
+
+            recipeFromApi.copy(isFavorite = isFavorite)
         } catch (e: HttpException) {
             Log.e("RecipesRepository", "HTTP ошибка ${e.code()} - ${e.message()}", e)
             null

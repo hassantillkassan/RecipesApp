@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
 
 @Dao
@@ -28,5 +27,8 @@ interface RecipesDao {
 
     @Query("UPDATE recipe SET is_favorite = :isFavorite WHERE id = :recipeId")
     fun updateRecipeFavoriteStatus(recipeId: Int, isFavorite: Boolean)
+
+    @Query("SELECT * FROM recipe WHERE id = :recipeId")
+    fun getRecipeById(recipeId: Int): Recipe?
 
 }
